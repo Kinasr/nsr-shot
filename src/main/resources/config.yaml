@@ -1,0 +1,11 @@
+shot:
+  actual-path: src/test/resources/shot_images/actual/
+  expected-path: src/test/resources/shot_images/expected/
+  techniques:
+    - technique: SSI
+      threshold: 0.999
+      operation: GREATER
+
+    - technique: MSE
+      threshold: 10.0
+      operation: LESS
