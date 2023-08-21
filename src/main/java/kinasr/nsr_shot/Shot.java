@@ -135,9 +135,17 @@ public class Shot {
     }
 
     private void setNameAndPath() {
+        var walker = StackWalker.getInstance();
+        var frame = walker.walk(frames -> frames.skip(2).findFirst().orElse(null));
+
+        String name = "";
+        if (frame != null)
+            name = frame.getClassName() + "#" + frame.getMethodName() + "_";
+
         var path = ConfigHandler.actualPath()
-                + timestamp() + ".png";
-        shotModel.actualShotPath(path);
+                + name + timestamp() + ".png";
+        shotModel.actualShotPath(path)
+                .imageName(name);
     }
 
     private void setNameAndPath(String name) {
