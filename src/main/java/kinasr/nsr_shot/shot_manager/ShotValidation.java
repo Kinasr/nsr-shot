@@ -33,7 +33,7 @@ public class ShotValidation {
     }
 
     public void assertThatShotMatchReference() {
-        var expectedShotPath = ConfigHandler.expectedPath().orElse("")
+        var expectedShotPath = ConfigHandler.expectedPath()
                 + model.imageName() + "ref.png";
 
         assertThatShotMatchReference(expectedShotPath);

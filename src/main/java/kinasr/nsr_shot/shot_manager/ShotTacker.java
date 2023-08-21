@@ -1,6 +1,8 @@
 package kinasr.nsr_shot.shot_manager;
 
 import kinasr.nsr_shot.exception.ShotFileException;
+import kinasr.nsr_shot.utility.Helper;
+import kinasr.nsr_shot.utility.config.ConfigHandler;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -11,8 +13,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ShotTacker {
+    private static boolean isDirectoryCreated = false;
 
-    private ShotTacker() {}
+    private ShotTacker() {
+    }
 
     public static void takeFullShot(WebDriver driver, String screenshotPath) {
         // Move mouse to the index 0, 0
@@ -44,7 +48,13 @@ public class ShotTacker {
         try (FileOutputStream screenshotOutputStream = new FileOutputStream(screenshotPath)) {
             screenshotOutputStream.write(screenshot);
         } catch (IOException e) {
-            throw new ShotFileException("Can not save this screenshot <" + screenshotPath + ">", e);
+            if (!isDirectoryCreated) {
+                isDirectoryCreated = true;
+
+                Helper.createDirectory(ConfigHandler.actualPath());
+                saveShot(screenshot, screenshotPath);
+            } else
+                throw new ShotFileException("Can not save this screenshot <" + screenshotPath + ">", e);
         }
     }
 }

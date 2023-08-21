@@ -5,7 +5,6 @@ import kinasr.nsr_shot.model.SimilarityTechniques;
 import kinasr.nsr_shot.model.TechniqueRecord;
 
 import java.util.List;
-import java.util.Optional;
 
 import static kinasr.nsr_shot.utility.config.ConfigFileLoader.configReader;
 import static kinasr.nsr_shot.utility.config.ConfigHelper.fetchData;
@@ -15,14 +14,17 @@ public class ConfigHandler {
     private static final ConfigRecord<String> expectedPath = new ConfigRecord<>("shot.expected-path");
     private static final ConfigRecord<List<TechniqueRecord>> techniques = new ConfigRecord<>("shot.techniques");
 
-    private ConfigHandler() {}
-
-    public static Optional<String> actualPath() {
-        return fetchData(actualPath, key -> configReader().get(key).asString());
+    private ConfigHandler() {
     }
 
-    public static Optional<String> expectedPath() {
-        return fetchData(expectedPath, key -> configReader().get(key).asString());
+    public static String actualPath() {
+        return fetchData(actualPath, key -> configReader().get(key).asString())
+                .orElse("src/test/resources/shot_images/actual/");
+    }
+
+    public static String expectedPath() {
+        return fetchData(expectedPath, key -> configReader().get(key).asString())
+                .orElse("src/test/resources/shot_images/expected/");
     }
 
     public static List<TechniqueRecord> techniques() {

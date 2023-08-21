@@ -135,13 +135,13 @@ public class Shot {
     }
 
     private void setNameAndPath() {
-        var path = ConfigHandler.actualPath().orElse("")
+        var path = ConfigHandler.actualPath()
                 + timestamp() + ".png";
         shotModel.actualShotPath(path);
     }
 
     private void setNameAndPath(String name) {
-        var path = ConfigHandler.actualPath().orElse("")
+        var path = ConfigHandler.actualPath()
                 + name + ".png";
         shotModel.actualShotPath(path)
                 .imageName(name);
@@ -149,7 +149,7 @@ public class Shot {
 
     private void setNameAndPath(String className, String testName) {
         var name = className + "#" + testName + "_";
-        var path = ConfigHandler.actualPath().orElse("")
+        var path = ConfigHandler.actualPath()
                 + name + timestamp() + ".png";
         shotModel.actualShotPath(path)
                 .imageName(name);
