@@ -6,6 +6,7 @@ import org.bytedeco.javacpp.indexer.UByteIndexer;
 import org.bytedeco.opencv.global.opencv_core;
 import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_core.Size;
 
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
 import static org.bytedeco.opencv.global.opencv_imgproc.resize;
@@ -19,7 +20,7 @@ public class CVManager {
         this.img2 = loadImage(img2Path);
     }
 
-    public Double getDiff(SimilarityTechniques technique) {
+    public double getDiff(SimilarityTechniques technique) {
         return switch (technique) {
             case SSI -> calculateStructuralSimilarityIndex(img1, img2);
             case MSE -> calculateMeanSquaredError(img1, img2);
@@ -45,6 +46,23 @@ public class CVManager {
         try(Indexer indexer= ssiResult.createIndexer()) {
             return indexer.getDouble();
         }
+    }
+
+    public boolean isTheTwoImagesHaveTheSameSize() {
+        return img1.size().equals(img2.size());
+    }
+
+    public Size image1Size() {
+        return img1.size();
+    }
+
+    public Size image2Size() {
+        return img2.size();
+    }
+
+    public void close() {
+        img1.close();
+        img2.close();
     }
 
     private double calculateMeanSquaredError(Mat image1, Mat image2) {

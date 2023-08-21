@@ -52,8 +52,16 @@ public class ShotValidation {
         }
 
         var cv = new CVManager(model.actualShotPath(), expectedShotPath);
+
+
+        var shotSize = cv.image1Size();
+        var refSize = cv.image2Size();
         if (Boolean.TRUE.equals(model.ignoreSize()))
             cv.resizeImg2ToMatchImg1();
+        else if (!shotSize.equals(refSize))
+            throw new AssertionError("The two images are not the same size. - Shot size <" +
+                    shotSize.width() + "*" + shotSize.height() + "> - Reference size <" +
+                    refSize.width() + "*" + refSize.height() + ">");
 
         var result = true;
         var msg = new StringBuilder();
@@ -73,7 +81,7 @@ public class ShotValidation {
         }
         msg.append("]");
 
-
+        cv.close();
         if (Boolean.FALSE.equals(result))
             throw new AssertionError("Image not match the reference using [\n" + msg);
 
