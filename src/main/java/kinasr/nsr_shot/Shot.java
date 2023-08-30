@@ -49,8 +49,8 @@ public class Shot {
     }
 
     public ShotValidation takeShotWithPath(String path, String name) {
-        shotModel.actualShotPath(path)
-                .imageName(name);
+        shotModel.path(path)
+                .name(name);
 
         return screenshot(null);
     }
@@ -88,15 +88,15 @@ public class Shot {
     }
 
     public ShotValidation takeShotWithPath(WebElement element, String path, String name) {
-        shotModel.actualShotPath(path)
-                .imageName(name);
+        shotModel.path(path)
+                .name(name);
 
         return screenshot(element);
     }
 
     public ShotValidation takeShotWithPath(By by, String path, String name) {
-        shotModel.actualShotPath(path)
-                .imageName(name);
+        shotModel.path(path)
+                .name(name);
 
         var element = driver.findElement(by);
         return screenshot(element);
@@ -119,11 +119,11 @@ public class Shot {
         prepareScreen();
 
         if (element == null)
-            ShotTacker.takeFullShot(driver, shotModel.actualShotPath());
+            ShotTacker.takeFullShot(driver, shotModel.fullPath());
         else
-            ShotTacker.takeElementShot(driver, shotModel.actualShotPath(), element);
+            ShotTacker.takeElementShot(driver, shotModel.fullPath(), element);
 
-        return new ShotValidation(shotModel);
+        return new ShotValidation(driver, shotModel);
     }
 
     private void prepareScreen() {
@@ -140,26 +140,24 @@ public class Shot {
 
         String name = "";
         if (frame != null)
-            name = frame.getClassName() + "#" + frame.getMethodName() + "_";
+            name = frame.getClassName() + "#" + frame.getMethodName();
 
-        var path = ConfigHandler.actualPath()
-                + name + timestamp() + ".png";
-        shotModel.actualShotPath(path)
-                .imageName(name);
+        shotModel.path(ConfigHandler.actualPath())
+                .name(name)
+                .timestamp(timestamp())
+                .extension(".png");
     }
 
     private void setNameAndPath(String name) {
-        var path = ConfigHandler.actualPath()
-                + name + ".png";
-        shotModel.actualShotPath(path)
-                .imageName(name);
+        shotModel.path(ConfigHandler.actualPath())
+                .name(name)
+                .extension(".png");
     }
 
     private void setNameAndPath(String className, String testName) {
-        var name = className + "#" + testName + "_";
-        var path = ConfigHandler.actualPath()
-                + name + timestamp() + ".png";
-        shotModel.actualShotPath(path)
-                .imageName(name);
+        shotModel.path(ConfigHandler.actualPath())
+                .name(className + "#" + testName)
+                .timestamp(testName)
+                .extension(".png");
     }
 }

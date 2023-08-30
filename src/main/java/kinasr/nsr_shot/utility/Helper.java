@@ -13,8 +13,8 @@ public class Helper {
     private Helper() {
     }
 
-    public static Long timestamp() {
-        return Calendar.getInstance().getTimeInMillis();
+    public static String timestamp() {
+        return String.valueOf(Calendar.getInstance().getTimeInMillis());
     }
 
     public static Boolean isFileExist(String filePath) {
@@ -54,8 +54,8 @@ public class Helper {
             splitter = "/";
         else if (filePath.contains("\\"))
             splitter = "\\\\";
-
         var path = new StringBuilder();
+
         if (!splitter.isEmpty()) {
             var directories = new java.util.ArrayList<>(Arrays.stream(filePath.split(splitter)).toList());
             directories.remove(directories.get(directories.size() - 1));
