@@ -11,8 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import static kinasr.nsr_shot.utility.Constant.NAME_SPLITTER;
 import static kinasr.nsr_shot.utility.Constant.REF_IMAGE_STAMP;
-import static kinasr.nsr_shot.utility.Helper.getFileFullPathWithPrefix;
-import static kinasr.nsr_shot.utility.Helper.timestamp;
+import static kinasr.nsr_shot.utility.Helper.*;
 
 public class Shot {
     private static final Logger logger = LoggerFactory.getLogger(Shot.class);
@@ -21,9 +20,10 @@ public class Shot {
     private final ShotModel refModel = new ShotModel();
     private final String shotPath;
     private final String refPath;
-    private Boolean ignoreSize = false;
+    private Boolean doNotResize = false;
     private Boolean forceResizeWindow = false;
     private Boolean supportFluent = false;
+    private Boolean safeRef = false;
 
     public Shot(WebDriver driver) {
         this.driver = driver;
@@ -37,8 +37,8 @@ public class Shot {
         this.refPath = refPath;
     }
 
-    public Shot ignoreSize() {
-        this.ignoreSize = true;
+    public Shot doNotResize() {
+        this.doNotResize = true;
         return this;
     }
 
@@ -62,71 +62,175 @@ public class Shot {
         return this;
     }
 
+    public Shot takeRef() {
+        safeRef = false;
+        setRefModelData(prepareName());
+        safeRef = true;
+
+        return refScreenshot(null);
+    }
+
+    public Shot takeRef(String name) {
+        safeRef = false;
+        setRefModelData(prepareName(name));
+        safeRef = true;
+
+        return refScreenshot(null);
+    }
+
+    public Shot takeRef(String className, String testName) {
+        safeRef = false;
+        setRefModelData(prepareName(className, testName));
+        safeRef = true;
+
+        return refScreenshot(null);
+    }
+
     public ShotValidation takeShot() {
-        setNameAndPath();
+        var name = prepareName();
+        setRefModelData(name);
+        setShotModelData(name);
 
         return screenshot(null);
     }
 
     public ShotValidation takeShot(String name) {
-        setNameAndPath(name);
+        var n = prepareName(name);
+        setRefModelData(n);
+        setShotModelData(n);
 
         return screenshot(null);
     }
 
     public ShotValidation takeShot(String className, String testName) {
-        setNameAndPath(className, testName);
+        var name = prepareName(className, testName);
+        setRefModelData(name);
+        setShotModelData(name);
 
         return screenshot(null);
     }
 
-    public ShotValidation takeShot(WebElement element) {
-        setNameAndPath();
+    public Shot takeRef(WebElement element) {
+        safeRef = false;
+        setRefModelData(prepareName());
+        safeRef = true;
 
-        return screenshot(element);
+        return refScreenshot(element);
     }
 
-    public ShotValidation takeShot(By by) {
-        setNameAndPath();
+    public Shot takeRef(WebElement element, String name) {
+        safeRef = false;
+        setRefModelData(prepareName(name));
+        safeRef = true;
 
-        var element = driver.findElement(by);
+        return refScreenshot(element);
+    }
+
+    public Shot takeRef(WebElement element, String className, String testName) {
+        safeRef = false;
+        setRefModelData(prepareName(className, testName));
+        safeRef = true;
+
+        return refScreenshot(element);
+    }
+
+    public ShotValidation takeShot(WebElement element) {
+        var name = prepareName();
+        setRefModelData(name);
+        setShotModelData(name);
+
         return screenshot(element);
     }
 
     public ShotValidation takeShot(WebElement element, String name) {
-        setNameAndPath(name);
+        var n = prepareName(name);
+        setRefModelData(n);
+        setShotModelData(n);
 
-        return screenshot(element);
-    }
-
-    public ShotValidation takeShot(By by, String name) {
-        setNameAndPath(name);
-
-        var element = driver.findElement(by);
         return screenshot(element);
     }
 
     public ShotValidation takeShot(WebElement element, String className, String testName) {
-        setNameAndPath(className, testName);
+        var name = prepareName(className, testName);
+        setRefModelData(name);
+        setShotModelData(name);
 
         return screenshot(element);
     }
 
-    public ShotValidation takeShot(By by, String className, String testName) {
-        setNameAndPath(className, testName);
+    public Shot takeRef(By by) {
+        safeRef = false;
+        setRefModelData(prepareName());
+        safeRef = true;
+
+        return refScreenshot(driver.findElement(by));
+    }
+
+    public Shot takeRef(By by, String name) {
+        safeRef = false;
+        setRefModelData(prepareName(name));
+        safeRef = true;
+
+        return refScreenshot(driver.findElement(by));
+    }
+
+    public Shot takeRef(By by, String className, String testName) {
+        safeRef = false;
+        setRefModelData(prepareName(className, testName));
+        safeRef = true;
+
+        return refScreenshot(driver.findElement(by));
+    }
+
+    public ShotValidation takeShot(By by) {
+        var name = prepareName();
+        setRefModelData(name);
+        setShotModelData(name);
+
+        return screenshot(driver.findElement(by));
+    }
+
+    public ShotValidation takeShot(By by, String name) {
+        var n = prepareName(name);
+        setRefModelData(n);
+        setShotModelData(n);
 
         var element = driver.findElement(by);
         return screenshot(element);
+    }
+
+    public ShotValidation takeShot(By by, String className, String testName) {
+        var name = prepareName(className, testName);
+        setRefModelData(name);
+        setShotModelData(name);
+
+        var element = driver.findElement(by);
+        return screenshot(element);
+    }
+
+    private Shot refScreenshot(WebElement element) {
+        prepareScreen();
+
+        var windowSize = driver.manage().window().getSize();
+        refModel.width(windowSize.width)
+                .height(windowSize.height);
+
+        if (element == null)
+            ShotTacker.takeFullShot(driver, refModel);
+        else
+            ShotTacker.takeElementShot(refModel, element);
+
+        return this;
     }
 
     private ShotValidation screenshot(WebElement element) {
         prepareScreen();
         var windowSize = driver.manage().window().getSize();
-        var isRefExist = loadRefData();
-
         shotModel.width(windowSize.width)
                 .height(windowSize.height);
 
+
+        var isRefExist = safeRef || loadRefData();
         if (Boolean.TRUE.equals(isRefExist && !refModel.windowSize().isEmpty() && forceResizeWindow) &&
                 !shotModel.windowSize().equals(refModel.windowSize())) {
             // Don't know why, but I need to -1 from width
@@ -134,23 +238,23 @@ public class Shot {
 
             shotModel.width(refModel.width())
                     .height(refModel.height());
-        } else if (Boolean.TRUE.equals(forceResizeWindow && refModel.windowSize().isEmpty())) {
+        } else if (Boolean.TRUE.equals(forceResizeWindow && isRefExist && refModel.windowSize().isEmpty())) {
             var refFullPath = refModel.fullPath();
             logger.warn("Can not resize window, can not retrieve size from this Ref image <{}>", refFullPath);
         }
 
         if (element == null)
-            ShotTacker.takeFullShot(driver, shotModel.fullPath());
+            ShotTacker.takeFullShot(driver, shotModel);
         else
-            ShotTacker.takeElementShot(shotModel.fullPath(), element);
+            ShotTacker.takeElementShot(shotModel, element);
 
-        if (Boolean.FALSE.equals(isRefExist)){
+        if (Boolean.FALSE.equals(isRefExist)) {
             refModel.width(windowSize.width)
                     .height(windowSize.height);
             saveRefImageAndThrow();
         }
 
-        return new ShotValidation(shotModel, refModel, ignoreSize);
+        return new ShotValidation(shotModel, refModel, doNotResize);
     }
 
     private void prepareScreen() {
@@ -161,7 +265,7 @@ public class Shot {
                         .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
     }
 
-    private void setNameAndPath() {
+    private String prepareName() {
         var skipNum = (supportFluent || ConfigHandler.supportFluent()) ? 3 : 2;
 
         var walker = StackWalker.getInstance();
@@ -171,10 +275,10 @@ public class Shot {
         if (frame != null)
             name = frame.getClassName() + "#" + frame.getMethodName();
 
-        setModelData(name);
+        return name;
     }
 
-    private void setNameAndPath(String name) {
+    private String prepareName(String name) {
         var extension = Helper.fileExtension(name);
 
         if (extension != null) {
@@ -182,20 +286,24 @@ public class Shot {
             shotModel.extension(extension);
         }
 
-        setModelData(name);
+        return name;
     }
 
-    private void setNameAndPath(String className, String testName) {
-        setModelData(className + "#" + testName);
+    private String prepareName(String className, String testName) {
+        return className + "#" + testName;
     }
 
-    private void setModelData(String name) {
+    private void setRefModelData(String name) {
+        if (Boolean.FALSE.equals(safeRef))
+            refModel.path(refPath)
+                    .name(name)
+                    .timestamp(REF_IMAGE_STAMP);
+    }
+
+    private void setShotModelData(String name) {
         shotModel.path(shotPath)
                 .name(name)
                 .timestamp(timestamp());
-        refModel.path(refPath)
-                .name(name)
-                .timestamp(REF_IMAGE_STAMP);
     }
 
     private Boolean loadRefData() {

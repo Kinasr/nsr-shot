@@ -18,6 +18,7 @@ public class ShotModel {
     private Integer width;
     private Integer height;
     private String extension = ".png";
+    private Boolean doesDirectoryCreated = false;
 
     public List<WebElement> elements() {
         return elements;
@@ -40,7 +41,6 @@ public class ShotModel {
 
         return this;
     }
-
 
     public String fullPath() {
         var fullPath = new StringBuilder(path)
@@ -143,6 +143,15 @@ public class ShotModel {
 
     public ShotModel height(Integer height) {
         this.height = height;
+        return this;
+    }
+
+    public Boolean doesDirectoryCreated() {
+        return doesDirectoryCreated;
+    }
+
+    public ShotModel doesDirectoryCreated(Boolean doesDirectoryCreated) {
+        this.doesDirectoryCreated = doesDirectoryCreated;
         return this;
     }
 

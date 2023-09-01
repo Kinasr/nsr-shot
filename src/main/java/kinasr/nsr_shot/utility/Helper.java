@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Objects;
 
 import static kinasr.nsr_shot.utility.Constant.*;
 
@@ -103,14 +105,15 @@ public class Helper {
         var matchingFileFullPath = "";
 
         File directory = new File(directoryPath);
-        File[] files = directory.listFiles();
+        if (directory.exists()) {
+            var files = Arrays.stream(Objects.requireNonNull(directory.listFiles()))
+                    .filter(f -> f.getName().startsWith(prefix)).toList();
 
-        if (files != null) {
-            if (files.length > 1)
-                throw new ShotFileException("There are multi files match <" + directoryPath + prefix + ">");
+            if (!files.isEmpty()) {
+                if (files.size() > 1)
+                    throw new ShotFileException("There are multi files match <" + directoryPath + prefix + ">");
 
-            else if (files.length == 1) {
-                var file = files[0];
+                var file = files.get(0);
                 if (file.isFile() && file.getName().startsWith(prefix))
                     matchingFileFullPath = file.getAbsolutePath();
             }
