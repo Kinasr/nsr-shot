@@ -5,9 +5,7 @@ import kinasr.nsr_shot.model.Operation;
 import kinasr.nsr_shot.model.ShotModel;
 import kinasr.nsr_shot.model.SimilarityTechniques;
 import kinasr.nsr_shot.model.TechniqueRecord;
-import kinasr.nsr_shot.utility.Helper;
 import kinasr.nsr_shot.utility.config.ConfigHandler;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,13 +14,15 @@ import java.util.List;
 
 public class ShotValidation {
     private static final Logger logger = LoggerFactory.getLogger(ShotValidation.class);
-    private final WebDriver driver;
-    private final ShotModel model;
+    private final ShotModel shotModel;
+    private final ShotModel refModel;
+    private final Boolean ignoreSize;
     private List<TechniqueRecord> techniques = new ArrayList<>();
 
-    public ShotValidation(WebDriver driver, ShotModel model) {
-        this.driver = driver;
-        this.model = model;
+    public ShotValidation(ShotModel shotModel, ShotModel refModel, Boolean ignoreSize) {
+        this.shotModel = shotModel;
+        this.refModel = refModel;
+        this.ignoreSize = ignoreSize;
     }
 
     public ShotValidation technique(SimilarityTechniques technique, Double threshold, Operation operation) {
@@ -36,31 +36,16 @@ public class ShotValidation {
     }
 
     public void assertThatShotMatchReference() {
-        var expectedShotPath = ConfigHandler.expectedPath()
-                + model.name() + "ref.png";
-
-        assertThatShotMatchReference(expectedShotPath);
-
-    }
-
-    public void assertThatShotMatchReference(String expectedShotPath) {
         if (techniques.isEmpty())
             techniques = ConfigHandler.techniques();
 
-        if (Boolean.FALSE.equals(Helper.isFileExist(expectedShotPath))){
-            Helper.moveAndRenameFile(model.fullPath(), expectedShotPath);
-
-            throw new AssertionError("No reference image found, " +
-                    "actual shot has been transferred to be reference");
-        }
-
-        var cv = new CVManager(model.fullPath(), expectedShotPath);
+        var cv = new CVManager(shotModel.fullPath(), refModel.fullPath());
 
         var shotSize = cv.image1Size();
         var refSize = cv.image2Size();
-        if (Boolean.TRUE.equals(model.ignoreSize()))
+        if (Boolean.TRUE.equals(ignoreSize))
             cv.resizeImg2ToMatchImg1();
-        else if (!shotSize.equals(refSize))
+        else if (Boolean.TRUE.equals(shotSize.width() != refSize.width() || shotSize.height() != refSize.height()))
             throw new AssertionError("The two images are not the same size. - Shot size <" +
                     shotSize.width() + "*" + shotSize.height() + "> - Reference size <" +
                     refSize.width() + "*" + refSize.height() + ">");
@@ -88,17 +73,5 @@ public class ShotValidation {
             throw new AssertionError("Image not match the reference using [\n" + msg);
 
         logger.info("Assert that shot matching the reference using [\n{}", msg);
-    }
-
-    private void saveRefImageAndThrow(ShotModel shot, String refPath) {
-        var windowSize = driver.manage().window().getSize();
-
-        shot.width(windowSize.width)
-                        .height(windowSize.height);
-
-        Helper.moveAndRenameFile(shot.fullPath(), refPath);
-
-        throw new AssertionError("No reference image found, " +
-                "actual shot has been transferred to be reference");
     }
 }

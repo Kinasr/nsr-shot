@@ -51,7 +51,7 @@ public class ShotTacker {
             if (!isDirectoryCreated) {
                 isDirectoryCreated = true;
 
-                Helper.createDirectory(ConfigHandler.actualPath());
+                Helper.createDirectory(ConfigHandler.shotPath());
                 saveShot(screenshot, screenshotPath);
             } else
                 throw new ShotFileException("Can not save this screenshot <" + screenshotPath + ">", e);

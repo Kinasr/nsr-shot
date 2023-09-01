@@ -12,19 +12,25 @@ import static kinasr.nsr_shot.utility.config.ConfigHelper.fetchData;
 public class ConfigHandler {
     private static final ConfigRecord<String> actualPath = new ConfigRecord<>("shot.actual-path");
     private static final ConfigRecord<String> expectedPath = new ConfigRecord<>("shot.expected-path");
+    private static final ConfigRecord<Boolean> supportFluent = new ConfigRecord<>("shot.support-fluent");
     private static final ConfigRecord<List<TechniqueRecord>> techniques = new ConfigRecord<>("shot.techniques");
 
     private ConfigHandler() {
     }
 
-    public static String actualPath() {
+    public static String shotPath() {
         return fetchData(actualPath, key -> configReader().get(key).asString())
                 .orElse("src/test/resources/shot_images/actual/");
     }
 
-    public static String expectedPath() {
+    public static String refPath() {
         return fetchData(expectedPath, key -> configReader().get(key).asString())
                 .orElse("src/test/resources/shot_images/expected/");
+    }
+
+    public static Boolean supportFluent() {
+        return fetchData(supportFluent, key -> configReader().get(key).asBoolean())
+                .orElse(false);
     }
 
     public static List<TechniqueRecord> techniques() {

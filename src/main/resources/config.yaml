@@ -1,6 +1,7 @@
 shot:
   actual-path: src/test/resources/shot_images/actual/
   expected-path: src/test/resources/shot_images/expected/
+  support-fluent: false
   techniques:
     - technique: SSI
       threshold: 0.999

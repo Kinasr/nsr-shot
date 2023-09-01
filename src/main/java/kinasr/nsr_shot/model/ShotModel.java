@@ -5,10 +5,11 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kinasr.nsr_shot.utility.Helper.separateFullPath;
+
 public class ShotModel {
     private final List<WebElement> elements = new ArrayList<>();
     private String path;
-    private Boolean ignoreSize = false;
     private String name = "";
     private String timestamp = "";
     private Integer width;
@@ -25,40 +26,18 @@ public class ShotModel {
     }
 
     public ShotModel fullPath(String fullPath) {
-        var lastSeparatorIndex = fullPath.lastIndexOf("\\");
-        if (lastSeparatorIndex == -1)
-            lastSeparatorIndex = fullPath.lastIndexOf("/");
+        ShotModel tempModel = separateFullPath(fullPath);
 
-        if (lastSeparatorIndex != -1) {
-            this.path = fullPath.substring(0, lastSeparatorIndex + 1);
-
-            if (lastSeparatorIndex < fullPath.length() - 1)
-                separateName(fullPath.substring(lastSeparatorIndex + 1));
-
-        } else
-            separateName(fullPath);
+        this.path = tempModel.path;
+        this.name = tempModel.name;
+        this.timestamp = tempModel.timestamp;
+        this.width = tempModel.width;
+        this.height = tempModel.height;
+        this.extension = tempModel.extension;
 
         return this;
     }
 
-    private void separateName(String fullName) {
-        this.extension(fullName.substring(fullName.lastIndexOf(".")));
-        fullName = fullName.replace(this.extension, "");
-
-        while (true) {
-            var sub = fullName.substring(fullName.lastIndexOf("_") + 1);
-            fullName = fullName.replace("_" + sub, "");
-
-            if (sub.contains("x")) {
-                this.windowSize(sub);
-            } else if (sub.matches("\\d+")) {
-                this.timestamp = sub;
-            } else {
-                this.name = sub;
-                break;
-            }
-        }
-    }
 
     public String fullPath() {
         var fullPath = new StringBuilder(path)
@@ -77,6 +56,22 @@ public class ShotModel {
         return fullPath.toString();
     }
 
+    public String fullName() {
+        var fullName = new StringBuilder(name);
+
+        if (!timestamp.isEmpty())
+            fullName.append("_")
+                    .append(timestamp);
+
+        if (!windowSize().isEmpty())
+            fullName.append("_")
+                    .append(windowSize());
+
+        fullName.append(extension);
+
+        return fullName.toString();
+    }
+
     public ShotModel path(String path) {
         this.path = path;
         return this;
@@ -84,15 +79,6 @@ public class ShotModel {
 
     public String path() {
         return path;
-    }
-
-    public Boolean ignoreSize() {
-        return ignoreSize;
-    }
-
-    public ShotModel ignoreSize(Boolean ignoreSize) {
-        this.ignoreSize = ignoreSize;
-        return this;
     }
 
     public String name() {
@@ -123,7 +109,7 @@ public class ShotModel {
     }
 
     public String windowSize() {
-        return width != null && height != null ? width + "_" + height : "";
+        return width != null && height != null ? width + "x" + height : "";
     }
 
     public ShotModel windowSize(String size) {
@@ -133,7 +119,7 @@ public class ShotModel {
             this.width = Integer.valueOf(dimension[0]);
             this.height = Integer.valueOf(dimension[1]);
         } else {
-            // bad size should show warning
+            // TODO: 08/31/2023   bad size should show warning
         }
 
         return this;
@@ -162,7 +148,6 @@ public class ShotModel {
         return "ShotModel{" +
                 "elements=" + elements +
                 ", path='" + path + '\'' +
-                ", ignoreSize=" + ignoreSize +
                 ", name='" + name + '\'' +
                 ", timestamp='" + timestamp + '\'' +
                 ", width=" + width +
