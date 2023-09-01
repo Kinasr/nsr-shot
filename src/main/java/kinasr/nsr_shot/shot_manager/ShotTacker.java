@@ -7,7 +7,6 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,9 +18,6 @@ public class ShotTacker {
     }
 
     public static void takeFullShot(WebDriver driver, String screenshotPath) {
-        // Move mouse to the index 0, 0
-        moveMouseToPageStart(driver);
-
         // Take a screenshot of the entire web page
         var screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 
@@ -29,18 +25,11 @@ public class ShotTacker {
         saveShot(screenshot, screenshotPath);
     }
 
-    public static void takeElementShot(WebDriver driver, String screenshotPath, WebElement element) {
-        moveMouseToPageStart(driver);
+    public static void takeElementShot(String screenshotPath, WebElement element) {
         var screenshot = element.getScreenshotAs(OutputType.BYTES);
 
         // Save the screenshot to a file
         saveShot(screenshot, screenshotPath);
-    }
-
-    private static void moveMouseToPageStart(WebDriver driver) {
-        new Actions(driver)
-                .moveToLocation(0, 0)
-                .perform();
     }
 
     private static void saveShot(byte[] screenshot, String screenshotPath) {

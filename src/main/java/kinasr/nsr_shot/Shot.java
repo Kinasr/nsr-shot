@@ -142,7 +142,7 @@ public class Shot {
         if (element == null)
             ShotTacker.takeFullShot(driver, shotModel.fullPath());
         else
-            ShotTacker.takeElementShot(driver, shotModel.fullPath(), element);
+            ShotTacker.takeElementShot(shotModel.fullPath(), element);
 
         if (Boolean.FALSE.equals(isRefExist)){
             refModel.width(windowSize.width)
