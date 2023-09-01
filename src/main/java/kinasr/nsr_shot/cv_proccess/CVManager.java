@@ -49,7 +49,9 @@ public class CVManager {
     }
 
     public boolean isTheTwoImagesHaveTheSameSize() {
-        return img1.size().equals(img2.size());
+        var img1Size = img1.size();
+        var img2Size = img2.size();
+        return img1Size.width() == img2Size.width() && img1Size.height() == img2Size.width();
     }
 
     public Size image1Size() {

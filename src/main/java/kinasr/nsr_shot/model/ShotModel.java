@@ -1,6 +1,8 @@
 package kinasr.nsr_shot.model;
 
 import org.openqa.selenium.WebElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.List;
 import static kinasr.nsr_shot.utility.Helper.separateFullPath;
 
 public class ShotModel {
+    private static final Logger logger = LoggerFactory.getLogger(ShotModel.class);
     private final List<WebElement> elements = new ArrayList<>();
     private String path;
     private String name = "";
@@ -119,7 +122,7 @@ public class ShotModel {
             this.width = Integer.valueOf(dimension[0]);
             this.height = Integer.valueOf(dimension[1]);
         } else {
-            // TODO: 08/31/2023   bad size should show warning
+            logger.warn("This is an invalid size <{}> size should be in format <800x600>", size);
         }
 
         return this;

@@ -45,7 +45,7 @@ public class ShotValidation {
         var refSize = cv.image2Size();
         if (Boolean.TRUE.equals(ignoreSize))
             cv.resizeImg2ToMatchImg1();
-        else if (Boolean.TRUE.equals(shotSize.width() != refSize.width() || shotSize.height() != refSize.height()))
+        else if (!cv.isTheTwoImagesHaveTheSameSize())
             throw new AssertionError("The two images are not the same size. - Shot size <" +
                     shotSize.width() + "*" + shotSize.height() + "> - Reference size <" +
                     refSize.width() + "*" + refSize.height() + ">");

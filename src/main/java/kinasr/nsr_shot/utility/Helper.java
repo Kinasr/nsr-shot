@@ -107,7 +107,7 @@ public class Helper {
 
         if (files != null) {
             if (files.length > 1)
-                throw new RuntimeException("There are multi files match <" + directoryPath + prefix + ">");
+                throw new ShotFileException("There are multi files match <" + directoryPath + prefix + ">");
 
             else if (files.length == 1) {
                 var file = files[0];
