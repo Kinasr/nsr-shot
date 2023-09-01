@@ -52,6 +52,7 @@
             <groupId>io.github.kinasr</groupId>
             <artifactId>nsr-yaml</artifactId>
             <version>0.0.1-beta-2</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
