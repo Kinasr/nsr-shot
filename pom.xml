@@ -6,7 +6,7 @@
 
     <groupId>io.github.kinasr</groupId>
     <artifactId>nsr-shot</artifactId>
-    <version>0.0.1-alpha-1</version>
+    <version>0.0.2-alpha</version>
     <name>NSR-Shot</name>
     <description>A library offers a variety of tools and features that make it easy to create and run visual tests.</description>
     <url>https://github.com/Kinasr/nsr-shot</url>
@@ -45,19 +45,13 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
             <version>4.11.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.github.kinasr</groupId>
             <artifactId>nsr-yaml</artifactId>
             <version>0.0.1-beta-2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.10.0</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -70,13 +64,20 @@
             <artifactId>logback-classic</artifactId>
             <version>1.4.6</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>GitHub OWNER Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/OWNER/REPOSITORY</url>
+            <name>GitHub Kinasr Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/Kinasr/nsr-shot</url>
         </repository>
     </distributionManagement>
 </project>
