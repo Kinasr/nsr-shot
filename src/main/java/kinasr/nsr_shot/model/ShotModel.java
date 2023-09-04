@@ -1,17 +1,12 @@
 package kinasr.nsr_shot.model;
 
-import org.openqa.selenium.WebElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static kinasr.nsr_shot.utility.Helper.separateFullPath;
 
 public class ShotModel {
     private static final Logger logger = LoggerFactory.getLogger(ShotModel.class);
-    private final List<WebElement> elements = new ArrayList<>();
     private String path;
     private String name = "";
     private String timestamp = "";
@@ -19,15 +14,6 @@ public class ShotModel {
     private Integer height;
     private String extension = ".png";
     private Boolean doesDirectoryCreated = false;
-
-    public List<WebElement> elements() {
-        return elements;
-    }
-
-    public ShotModel addIgnoreElement(WebElement element) {
-        this.elements.add(element);
-        return this;
-    }
 
     public ShotModel fullPath(String fullPath) {
         ShotModel tempModel = separateFullPath(fullPath);
@@ -158,13 +144,13 @@ public class ShotModel {
     @Override
     public String toString() {
         return "ShotModel{" +
-                "elements=" + elements +
-                ", path='" + path + '\'' +
+                "path='" + path + '\'' +
                 ", name='" + name + '\'' +
                 ", timestamp='" + timestamp + '\'' +
                 ", width=" + width +
                 ", height=" + height +
                 ", extension='" + extension + '\'' +
+                ", doesDirectoryCreated=" + doesDirectoryCreated +
                 '}';
     }
 }
