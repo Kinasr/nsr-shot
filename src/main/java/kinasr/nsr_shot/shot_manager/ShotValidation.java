@@ -16,13 +16,13 @@ public class ShotValidation {
     private static final Logger logger = LoggerFactory.getLogger(ShotValidation.class);
     private final ShotModel shotModel;
     private final ShotModel refModel;
-    private final Boolean doNotResize;
+    private final Boolean resizeImage;
     private List<TechniqueRecord> techniques = new ArrayList<>();
 
-    public ShotValidation(ShotModel shotModel, ShotModel refModel, Boolean doNotResize) {
+    public ShotValidation(ShotModel shotModel, ShotModel refModel, Boolean resizeImage) {
         this.shotModel = shotModel;
         this.refModel = refModel;
-        this.doNotResize = doNotResize;
+        this.resizeImage = resizeImage;
     }
 
     public ShotValidation technique(SimilarityTechniques technique, Double threshold, Operation operation) {
@@ -43,7 +43,7 @@ public class ShotValidation {
 
         var shotSize = cv.image1Size();
         var refSize = cv.image2Size();
-        if (Boolean.FALSE.equals(doNotResize))
+        if (Boolean.TRUE.equals(resizeImage))
             cv.resizeImg2ToMatchImg1();
         else if (!cv.isTheTwoImagesHaveTheSameSize())
             throw new AssertionError("The two images are not the same size. - Shot size <" +
