@@ -13,6 +13,10 @@ public class ConfigHandler {
     private static final ConfigRecord<String> actualPath = new ConfigRecord<>("shot.actual-path");
     private static final ConfigRecord<String> expectedPath = new ConfigRecord<>("shot.expected-path");
     private static final ConfigRecord<Boolean> supportFluent = new ConfigRecord<>("shot.support-fluent");
+    private static final ConfigRecord<Boolean> resizeImage =
+            new ConfigRecord<>("shot.resize-ref-image-to-match-shot-image-size");
+    private static final ConfigRecord<Boolean> forceResizeWindow =
+            new ConfigRecord<>("shot.force-resize-window-to-match-the-reference");
     private static final ConfigRecord<List<TechniqueRecord>> techniques = new ConfigRecord<>("shot.techniques");
 
     private ConfigHandler() {
@@ -30,6 +34,16 @@ public class ConfigHandler {
 
     public static Boolean supportFluent() {
         return fetchData(supportFluent, key -> configReader().get(key).asBoolean())
+                .orElse(false);
+    }
+
+    public static Boolean resizeImage() {
+        return fetchData(resizeImage, key -> configReader().get(key).asBoolean())
+                .orElse(true);
+    }
+
+    public static Boolean forceResizeWindow() {
+        return fetchData(forceResizeWindow, key -> configReader().get(key).asBoolean())
                 .orElse(false);
     }
 

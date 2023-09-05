@@ -2,6 +2,8 @@ shot:
   actual-path: src/test/resources/shot_images/actual/
   expected-path: src/test/resources/shot_images/expected/
   support-fluent: false
+  resize-ref-image-to-match-shot-image-size: true
+  force-resize-window-to-match-the-reference: false
   techniques:
     - technique: SSI
       threshold: 0.999

@@ -14,7 +14,8 @@ import java.util.List;
 
 import static kinasr.nsr_shot.utility.Constant.NAME_SPLITTER;
 import static kinasr.nsr_shot.utility.Constant.REF_IMAGE_STAMP;
-import static kinasr.nsr_shot.utility.Helper.*;
+import static kinasr.nsr_shot.utility.Helper.getFileFullPathWithPrefix;
+import static kinasr.nsr_shot.utility.Helper.timestamp;
 
 public class Shot {
     private static final Logger logger = LoggerFactory.getLogger(Shot.class);
@@ -25,9 +26,9 @@ public class Shot {
     private final List<WebElement> elements = new ArrayList<>();
     private final String shotPath;
     private final String refPath;
-    private Boolean doNotResize = false;
-    private Boolean forceResizeWindow = false;
-    private Boolean supportFluent = false;
+    private Boolean resizeImage;
+    private Boolean forceResizeWindow;
+    private Boolean supportFluent;
     private Boolean safeRef = false;
 
     public Shot(WebDriver driver) {
@@ -42,8 +43,13 @@ public class Shot {
         this.refPath = refPath;
     }
 
-    public Shot doNotResize() {
-        this.doNotResize = true;
+    public Shot resizeRefImageToMatchShot() {
+        this.resizeImage = true;
+        return this;
+    }
+
+    public Shot resizeRefImageToMatchShot(Boolean enable) {
+        this.resizeImage = enable;
         return this;
     }
 
@@ -52,8 +58,18 @@ public class Shot {
         return this;
     }
 
+    public Shot forceResizeWindowToMatchRef(Boolean enable) {
+        this.forceResizeWindow = enable;
+        return this;
+    }
+
     public Shot supportFluent() {
         this.supportFluent = true;
+        return this;
+    }
+
+    public Shot supportFluent(Boolean enable) {
+        this.supportFluent = enable;
         return this;
     }
 
@@ -229,21 +245,23 @@ public class Shot {
     }
 
     private ShotValidation screenshot(WebElement element) {
+        var resizeWindow = forceResizeWindow != null ? forceResizeWindow : ConfigHandler.forceResizeWindow();
         prepareScreen();
+
         var windowSize = driver.manage().window().getSize();
         shotModel.width(windowSize.width)
                 .height(windowSize.height);
 
 
         var isRefExist = safeRef || loadRefData();
-        if (Boolean.TRUE.equals(isRefExist && !refModel.windowSize().isEmpty() && forceResizeWindow) &&
+        if (Boolean.TRUE.equals(isRefExist && !refModel.windowSize().isEmpty() && resizeWindow) &&
                 !shotModel.windowSize().equals(refModel.windowSize())) {
             // Don't know why, but I need to -1 from width
             driver.manage().window().setSize(new Dimension(refModel.width() - 1, refModel.height()));
 
             shotModel.width(refModel.width())
                     .height(refModel.height());
-        } else if (Boolean.TRUE.equals(forceResizeWindow && isRefExist && refModel.windowSize().isEmpty())) {
+        } else if (Boolean.TRUE.equals(resizeWindow && isRefExist && refModel.windowSize().isEmpty())) {
             var refFullPath = refModel.fullPath();
             logger.warn("Can not resize window, can not retrieve size from this Ref image <{}>", refFullPath);
         }
@@ -259,7 +277,8 @@ public class Shot {
             saveRefImageAndThrow();
         }
 
-        return new ShotValidation(shotModel, refModel, doNotResize);
+        return new ShotValidation(shotModel, refModel,
+                resizeImage != null ? resizeImage : ConfigHandler.resizeImage());
     }
 
     private void prepareScreen() {
@@ -270,11 +289,12 @@ public class Shot {
 
         var jsExecutor = (JavascriptExecutor) driver;
         tempElementList.forEach(element -> jsExecutor
-                        .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
+                .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
     }
 
     private String prepareName() {
-        var skipNum = (supportFluent || ConfigHandler.supportFluent()) ? 3 : 2;
+        var isFluent = supportFluent != null ? supportFluent : ConfigHandler.supportFluent();
+        var skipNum = Boolean.TRUE.equals(isFluent) ? 3 : 2;
 
         var walker = StackWalker.getInstance();
         var frame = walker.walk(frames -> frames.skip(skipNum).findFirst().orElse(null));
