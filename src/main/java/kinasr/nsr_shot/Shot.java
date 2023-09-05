@@ -9,6 +9,9 @@ import org.openqa.selenium.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static kinasr.nsr_shot.utility.Constant.NAME_SPLITTER;
 import static kinasr.nsr_shot.utility.Constant.REF_IMAGE_STAMP;
 import static kinasr.nsr_shot.utility.Helper.*;
@@ -18,6 +21,8 @@ public class Shot {
     private final WebDriver driver;
     private final ShotModel shotModel = new ShotModel();
     private final ShotModel refModel = new ShotModel();
+    private final List<By> elementsLocators = new ArrayList<>();
+    private final List<WebElement> elements = new ArrayList<>();
     private final String shotPath;
     private final String refPath;
     private Boolean doNotResize = false;
@@ -53,12 +58,12 @@ public class Shot {
     }
 
     public Shot ignoreElement(By by) {
-        var element = driver.findElement(by);
-        return ignoreElement(element);
+        elementsLocators.add(by);
+        return this;
     }
 
     public Shot ignoreElement(WebElement element) {
-        shotModel.addIgnoreElement(element);
+        elements.add(element);
         return this;
     }
 
@@ -258,10 +263,13 @@ public class Shot {
     }
 
     private void prepareScreen() {
-        var jsExecutor = (JavascriptExecutor) driver;
+        var tempElementList = new ArrayList<>(elements);
+        for (By elementsLocator : elementsLocators) {
+            tempElementList.add(driver.findElement(elementsLocator));
+        }
 
-        shotModel.elements()
-                .forEach(element -> jsExecutor
+        var jsExecutor = (JavascriptExecutor) driver;
+        tempElementList.forEach(element -> jsExecutor
                         .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
     }
 
