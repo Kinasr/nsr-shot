@@ -6,7 +6,7 @@
 
     <groupId>io.github.kinasr</groupId>
     <artifactId>nsr-shot</artifactId>
-    <version>0.0.4-alpha</version>
+    <version>0.0.5-alpha</version>
     <name>NSR-Shot</name>
     <description>A library offers a variety of tools and features that make it easy to create and run visual tests.</description>
     <url>https://github.com/Kinasr/nsr-shot</url>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>io.github.kinasr</groupId>
             <artifactId>nsr-yaml</artifactId>
-            <version>0.0.1-beta-2</version>
+            <version>0.0.3-beta</version>
             <scope>provided</scope>
         </dependency>
 
@@ -70,6 +70,13 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.5.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
