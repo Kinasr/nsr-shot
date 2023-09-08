@@ -1,6 +1,7 @@
 package kinasr.nsr_shot.utility.config;
 
-import exception.InvalidKeyException;
+
+import kinasr.nsr_yaml.exception.InvalidKeyException;
 
 import java.util.Optional;
 import java.util.function.Function;
