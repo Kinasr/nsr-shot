@@ -6,9 +6,9 @@ shot:
   force-resize-window-to-match-the-reference: false
   techniques:
     - technique: SSI
-      threshold: 0.999
+      threshold: 0.90
       operation: GREATER
 
     - technique: MSE
-      threshold: 10.0
+      threshold: 30.0
       operation: LESS
