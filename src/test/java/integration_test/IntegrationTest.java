@@ -15,6 +15,7 @@ public class IntegrationTest {
     // region Locators
     private final By dialogLogin = By.className("login_wrapper-inner");
     private final By dialogLoginCredentials = By.className("login_credentials_wrap-inner");
+    private final By wrapperLogin = By.className("login_wrapper");
     // endregion
 
     @BeforeEach
@@ -49,6 +50,24 @@ public class IntegrationTest {
         new Shot(driver)
                 .ignoreElement(dialogLoginCredentials)
                 .takeShot()
+                .assertThatShotMatchReference();
+    }
+
+    @Test
+    void checkThatWrapperLoginIsVisuallyCorrectWithoutLoginCredentials() {
+        new Shot(driver)
+                .ignoreElement(dialogLoginCredentials)
+                .takeShot(wrapperLogin)
+                .assertThatShotMatchReference();
+    }
+
+    @Test
+    void checkThatCanTakeRefAndShotInSameTest() {
+        var shot = new Shot(driver)
+                .takeRef(wrapperLogin);
+        driver.navigate().refresh();
+
+        shot.takeShot(wrapperLogin)
                 .assertThatShotMatchReference();
     }
 }
