@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import static kinasr.nsr_shot.utility.Helper.separateFullPath;
 
+@SuppressWarnings("UnusedReturnValue")
 public class ShotModel {
     private static final Logger logger = LoggerFactory.getLogger(ShotModel.class);
     private String path;
@@ -14,6 +15,7 @@ public class ShotModel {
     private Integer height;
     private String extension = ".png";
     private Boolean doesDirectoryCreated = false;
+    private byte[] image;
 
     public ShotModel fullPath(String fullPath) {
         ShotModel tempModel = separateFullPath(fullPath);
@@ -138,6 +140,15 @@ public class ShotModel {
 
     public ShotModel doesDirectoryCreated(Boolean doesDirectoryCreated) {
         this.doesDirectoryCreated = doesDirectoryCreated;
+        return this;
+    }
+
+    public byte[] image() {
+        return image;
+    }
+
+    public ShotModel image(byte[] image) {
+        this.image = image;
         return this;
     }
 

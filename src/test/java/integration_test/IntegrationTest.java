@@ -2,6 +2,7 @@ package integration_test;
 
 import kinasr.nsr_shot.Shot;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -69,5 +70,16 @@ public class IntegrationTest {
 
         shot.takeShot(wrapperLogin)
                 .assertThatShotMatchReference();
+    }
+
+    @Test
+    void checkThatShotResultsHasSomeResults() {
+        var result = new Shot(driver)
+                .takeShot()
+                .isMatch();
+
+        Assertions.assertTrue(result.isMatch());
+        Assertions.assertTrue(result.ref().image().length > 0);
+        Assertions.assertTrue(result.matchedShot().image().length >  0);
     }
 }
