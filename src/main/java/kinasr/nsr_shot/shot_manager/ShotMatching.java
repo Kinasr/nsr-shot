@@ -1,10 +1,7 @@
 package kinasr.nsr_shot.shot_manager;
 
 import kinasr.nsr_shot.cv_proccess.CVManager;
-import kinasr.nsr_shot.model.Operation;
-import kinasr.nsr_shot.model.ShotModel;
-import kinasr.nsr_shot.model.SimilarityTechniques;
-import kinasr.nsr_shot.model.TechniqueRecord;
+import kinasr.nsr_shot.model.*;
 import kinasr.nsr_shot.utility.config.ConfigHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,20 +9,20 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShotValidation {
-    private static final Logger logger = LoggerFactory.getLogger(ShotValidation.class);
+public class ShotMatching {
+    private static final Logger logger = LoggerFactory.getLogger(ShotMatching.class);
     private final ShotModel shotModel;
     private final ShotModel refModel;
     private final Boolean resizeImage;
     private List<TechniqueRecord> techniques = new ArrayList<>();
 
-    public ShotValidation(ShotModel shotModel, ShotModel refModel, Boolean resizeImage) {
+    public ShotMatching(ShotModel shotModel, ShotModel refModel, Boolean resizeImage) {
         this.shotModel = shotModel;
         this.refModel = refModel;
         this.resizeImage = resizeImage;
     }
 
-    public ShotValidation technique(SimilarityTechniques technique, Double threshold, Operation operation) {
+    public ShotMatching technique(SimilarityTechniques technique, Double threshold, Operation operation) {
         techniques.add(new TechniqueRecord(
                 technique,
                 threshold,
@@ -36,13 +33,20 @@ public class ShotValidation {
     }
 
     public void assertThatShotMatchReference() {
+        if (Boolean.FALSE.equals(isMatch().isMatch())) {
+            throw new AssertionError("Shot Image not matching the reference");
+        }
+    }
+
+    public MatchingResult isMatch() {
+        var isMatch = true;
         if (techniques.isEmpty())
             techniques = ConfigHandler.techniques();
 
-        var cv = new CVManager(shotModel.fullPath(), refModel.fullPath());
-
+        var cv = new CVManager(shotModel.image(), refModel.image());
         var shotSize = cv.image1Size();
         var refSize = cv.image2Size();
+
         if (Boolean.TRUE.equals(resizeImage))
             cv.resizeImg2ToMatchImg1();
         else if (!cv.isTheTwoImagesHaveTheSameSize())
@@ -50,11 +54,10 @@ public class ShotValidation {
                     shotSize.width() + "*" + shotSize.height() + "> - Reference size <" +
                     refSize.width() + "*" + refSize.height() + ">");
 
-        var result = true;
         var msg = new StringBuilder();
         for (TechniqueRecord techniqueRecord : techniques) {
             var diff = cv.getDiff(techniqueRecord.technique());
-            result = result && techniqueRecord.operation().operationResult(diff, techniqueRecord.threshold());
+            isMatch = isMatch && techniqueRecord.operation().operationResult(diff, techniqueRecord.threshold());
             msg.append("   <")
                     .append(techniqueRecord.technique().name())
                     .append("> technique - actual <")
@@ -67,11 +70,20 @@ public class ShotValidation {
                     .append("\n");
         }
         msg.append("]");
-
         cv.close();
-        if (Boolean.FALSE.equals(result))
-            throw new AssertionError("Image not match the reference using [\n" + msg);
 
-        logger.info("Assert that shot matching the reference using [\n{}", msg);
+        var result = new MatchingResult(
+                isMatch,
+                new ShotRecord(refModel.image(), refModel.fullPath())
+        );
+        if (Boolean.TRUE.equals(isMatch)) {
+            result.addMatchedShot(new ShotRecord(shotModel.image(), shotModel.fullPath()));
+            logger.info("Assert that shot matching the reference using [\n{}", msg);
+        } else {
+            result.addShot(new ShotRecord(shotModel.image(), shotModel.fullPath()));
+            logger.warn("Image not match the reference using [\n{}", msg);
+        }
+
+        return result;
     }
 }

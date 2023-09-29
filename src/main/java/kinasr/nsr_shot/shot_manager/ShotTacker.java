@@ -15,19 +15,23 @@ public class ShotTacker {
     private ShotTacker() {
     }
 
-    public static void takeFullShot(WebDriver driver, ShotModel model) {
+    public static byte[] takeFullShot(WebDriver driver, ShotModel model) {
         // Take a screenshot of the entire web page
         var screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 
         // Save the screenshot to a file
         saveShot(screenshot, model);
+
+        return screenshot;
     }
 
-    public static void takeElementShot(ShotModel model, WebElement element) {
+    public static byte[] takeElementShot(ShotModel model, WebElement element) {
         var screenshot = element.getScreenshotAs(OutputType.BYTES);
 
         // Save the screenshot to a file
         saveShot(screenshot, model);
+
+        return screenshot;
     }
 
     private static void saveShot(byte[] screenshot, ShotModel model) {

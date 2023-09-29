@@ -1,14 +1,18 @@
 package kinasr.nsr_shot;
 
+import kinasr.nsr_shot.exception.ShotFileException;
 import kinasr.nsr_shot.model.ShotModel;
 import kinasr.nsr_shot.shot_manager.ShotTacker;
-import kinasr.nsr_shot.shot_manager.ShotValidation;
+import kinasr.nsr_shot.shot_manager.ShotMatching;
 import kinasr.nsr_shot.utility.Helper;
 import kinasr.nsr_shot.utility.config.ConfigHandler;
 import org.openqa.selenium.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,7 +111,7 @@ public class Shot {
         return refScreenshot(null);
     }
 
-    public ShotValidation takeShot() {
+    public ShotMatching takeShot() {
         var name = prepareName();
         setRefModelData(name);
         setShotModelData(name);
@@ -115,7 +119,7 @@ public class Shot {
         return screenshot(null);
     }
 
-    public ShotValidation takeShot(String name) {
+    public ShotMatching takeShot(String name) {
         var n = prepareName(name);
         setRefModelData(n);
         setShotModelData(n);
@@ -123,7 +127,7 @@ public class Shot {
         return screenshot(null);
     }
 
-    public ShotValidation takeShot(String className, String testName) {
+    public ShotMatching takeShot(String className, String testName) {
         var name = prepareName(className, testName);
         setRefModelData(name);
         setShotModelData(name);
@@ -155,7 +159,7 @@ public class Shot {
         return refScreenshot(element);
     }
 
-    public ShotValidation takeShot(WebElement element) {
+    public ShotMatching takeShot(WebElement element) {
         var name = prepareName();
         setRefModelData(name);
         setShotModelData(name);
@@ -163,7 +167,7 @@ public class Shot {
         return screenshot(element);
     }
 
-    public ShotValidation takeShot(WebElement element, String name) {
+    public ShotMatching takeShot(WebElement element, String name) {
         var n = prepareName(name);
         setRefModelData(n);
         setShotModelData(n);
@@ -171,7 +175,7 @@ public class Shot {
         return screenshot(element);
     }
 
-    public ShotValidation takeShot(WebElement element, String className, String testName) {
+    public ShotMatching takeShot(WebElement element, String className, String testName) {
         var name = prepareName(className, testName);
         setRefModelData(name);
         setShotModelData(name);
@@ -203,7 +207,7 @@ public class Shot {
         return refScreenshot(driver.findElement(by));
     }
 
-    public ShotValidation takeShot(By by) {
+    public ShotMatching takeShot(By by) {
         var name = prepareName();
         setRefModelData(name);
         setShotModelData(name);
@@ -211,7 +215,7 @@ public class Shot {
         return screenshot(driver.findElement(by));
     }
 
-    public ShotValidation takeShot(By by, String name) {
+    public ShotMatching takeShot(By by, String name) {
         var n = prepareName(name);
         setRefModelData(n);
         setShotModelData(n);
@@ -220,7 +224,7 @@ public class Shot {
         return screenshot(element);
     }
 
-    public ShotValidation takeShot(By by, String className, String testName) {
+    public ShotMatching takeShot(By by, String className, String testName) {
         var name = prepareName(className, testName);
         setRefModelData(name);
         setShotModelData(name);
@@ -236,15 +240,16 @@ public class Shot {
         refModel.width(windowSize.width)
                 .height(windowSize.height);
 
-        if (element == null)
-            ShotTacker.takeFullShot(driver, refModel);
-        else
-            ShotTacker.takeElementShot(refModel, element);
+        refModel.image(
+                element == null ?
+                        ShotTacker.takeFullShot(driver, refModel) :
+                        ShotTacker.takeElementShot(refModel, element)
+        );
 
         return this;
     }
 
-    private ShotValidation screenshot(WebElement element) {
+    private ShotMatching screenshot(WebElement element) {
         var resizeWindow = forceResizeWindow != null ? forceResizeWindow : ConfigHandler.forceResizeWindow();
         prepareScreen();
 
@@ -266,10 +271,11 @@ public class Shot {
             logger.warn("Can not resize window, can not retrieve size from this Ref image <{}>", refFullPath);
         }
 
-        if (element == null)
-            ShotTacker.takeFullShot(driver, shotModel);
-        else
-            ShotTacker.takeElementShot(shotModel, element);
+        shotModel.image(
+                element == null ?
+                        ShotTacker.takeFullShot(driver, shotModel) :
+                        ShotTacker.takeElementShot(shotModel, element)
+        );
 
         if (Boolean.FALSE.equals(isRefExist)) {
             refModel.width(windowSize.width)
@@ -277,7 +283,7 @@ public class Shot {
             saveRefImageAndThrow();
         }
 
-        return new ShotValidation(shotModel, refModel,
+        return new ShotMatching(shotModel, refModel,
                 resizeImage != null ? resizeImage : ConfigHandler.resizeImage());
     }
 
@@ -339,11 +345,19 @@ public class Shot {
                 ConfigHandler.refPath(), refModel.name() + NAME_SPLITTER + refModel.timestamp()
         );
 
-        if (!fullPath.isEmpty()) {
-            refModel.fullPath(fullPath);
-            return true;
+        if (fullPath.isEmpty())
+            return false;
+
+        try {
+            refModel.image(
+                    Files.readAllBytes(Path.of(fullPath))
+            );
+        } catch (IOException e) {
+            throw new ShotFileException("Can not load this reference image <" + fullPath + ">");
         }
-        return false;
+
+        refModel.fullPath(fullPath);
+        return true;
     }
 
     private void saveRefImageAndThrow() {

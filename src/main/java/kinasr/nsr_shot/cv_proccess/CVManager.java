@@ -8,16 +8,16 @@ import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Size;
 
-import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
 import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 public class CVManager {
     private final Mat img1;
     private final Mat img2;
 
-    public CVManager(String img1Path, String img2Path) {
-        this.img1 = loadImage(img1Path);
-        this.img2 = loadImage(img2Path);
+    public CVManager(byte[] img1, byte[] img2) {
+        this.img1 = loadImage(img1);
+        this.img2 = loadImage(img2);
     }
 
     public double getDiff(SimilarityTechniques technique) {
@@ -26,7 +26,7 @@ public class CVManager {
             case MSE -> calculateMeanSquaredError(img1, img2);
             case MAE -> calculateMeanAbsoluteError(img1, img2);
             case PSNR -> calculatePSNR(
-                    calculateMeanSquaredError(img1, img2), 255
+                    calculateMeanSquaredError(img1, img2)
             );
         };
     }
@@ -35,8 +35,8 @@ public class CVManager {
         resize(img2, img2, img1.size());
     }
 
-    private Mat loadImage(String imgPath) {
-        return imread(imgPath);
+    private Mat loadImage(byte[] img) {
+        return imdecode(new Mat(img), IMREAD_COLOR);
     }
 
     private double calculateStructuralSimilarityIndex(Mat image1, Mat image2) {
@@ -89,7 +89,8 @@ public class CVManager {
         return opencv_core.sumElems(mseResult).get() / (image1.rows() * image1.cols());
     }
 
-    private double calculatePSNR(double mse, double maxValue) {
+    private double calculatePSNR(double mse) {
+        var maxValue = 255;
         return 10 * Math.log10((maxValue * maxValue) / mse);
     }
 }
