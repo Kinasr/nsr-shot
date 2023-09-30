@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static kinasr.nsr_shot.utility.Constant.NAME_SPLITTER;
@@ -29,8 +30,6 @@ public class Shot {
     private final ShotModel refModel = new ShotModel();
     private final List<By> elementsLocators = new ArrayList<>();
     private final List<WebElement> elements = new ArrayList<>();
-    private final String shotPath;
-    private final String refPath;
     private final ShotOption option;
     private Boolean safeRef = false;
 
@@ -41,8 +40,6 @@ public class Shot {
     public Shot(WebDriver driver, ShotOption option) {
         this.driver = driver;
         this.option = option;
-        this.shotPath = ConfigHandler.shotPath();
-        this.refPath = ConfigHandler.refPath();
     }
 
     public Shot ignoreElement(By by) {
@@ -50,8 +47,18 @@ public class Shot {
         return this;
     }
 
+    public Shot ignoreElement(By[] by) {
+        elementsLocators.addAll(Arrays.asList(by));
+        return this;
+    }
+
     public Shot ignoreElement(WebElement element) {
         elements.add(element);
+        return this;
+    }
+
+    public Shot ignoreElement(WebElement[] elements) {
+        this.elements.addAll(Arrays.asList(elements));
         return this;
     }
 
@@ -239,13 +246,13 @@ public class Shot {
 
     private void setRefModelData(String name) {
         if (Boolean.FALSE.equals(safeRef))
-            refModel.path(refPath)
+            refModel.path(ConfigHandler.refPath())
                     .name(name)
                     .timestamp(REF_IMAGE_STAMP);
     }
 
     private void setShotModelData(String name) {
-        shotModel.path(shotPath)
+        shotModel.path(ConfigHandler.shotPath())
                 .name(name)
                 .timestamp(timestamp());
     }
