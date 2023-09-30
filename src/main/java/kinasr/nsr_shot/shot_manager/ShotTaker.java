@@ -11,8 +11,8 @@ import org.openqa.selenium.WebElement;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class ShotTacker {
-    private ShotTacker() {
+public class ShotTaker {
+    private ShotTaker() {
     }
 
     public static byte[] takeFullShot(WebDriver driver, ShotModel model) {

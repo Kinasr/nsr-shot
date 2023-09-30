@@ -4,6 +4,7 @@ import kinasr.nsr_shot.exception.ShotFileException;
 import kinasr.nsr_shot.model.ShotModel;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -120,5 +121,20 @@ public class Helper {
         }
 
         return matchingFileFullPath;
+    }
+
+    public static void saveShot(byte[] screenshot, ShotModel model) {
+        // Save the screenshot to a file
+        try (FileOutputStream screenshotOutputStream = new FileOutputStream(model.fullPath())) {
+            screenshotOutputStream.write(screenshot);
+        } catch (IOException e) {
+            if (Boolean.FALSE.equals(model.doesDirectoryCreated())) {
+                model.doesDirectoryCreated(true);
+
+                Helper.createDirectory(model.path());
+                saveShot(screenshot, model);
+            } else
+                throw new ShotFileException("Can not save this screenshot <" + model.fullPath() + ">", e);
+        }
     }
 }

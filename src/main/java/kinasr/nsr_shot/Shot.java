@@ -2,7 +2,7 @@ package kinasr.nsr_shot;
 
 import kinasr.nsr_shot.exception.ShotFileException;
 import kinasr.nsr_shot.model.ShotModel;
-import kinasr.nsr_shot.shot_manager.ShotTacker;
+import kinasr.nsr_shot.shot_manager.ShotTaker;
 import kinasr.nsr_shot.shot_manager.ShotMatching;
 import kinasr.nsr_shot.utility.Helper;
 import kinasr.nsr_shot.utility.config.ConfigHandler;
@@ -103,14 +103,6 @@ public class Shot {
         return refScreenshot(null);
     }
 
-    public Shot takeRef(String className, String testName) {
-        safeRef = false;
-        setRefModelData(prepareName(className, testName));
-        safeRef = true;
-
-        return refScreenshot(null);
-    }
-
     public ShotMatching takeShot() {
         var name = prepareName();
         setRefModelData(name);
@@ -127,14 +119,6 @@ public class Shot {
         return screenshot(null);
     }
 
-    public ShotMatching takeShot(String className, String testName) {
-        var name = prepareName(className, testName);
-        setRefModelData(name);
-        setShotModelData(name);
-
-        return screenshot(null);
-    }
-
     public Shot takeRef(WebElement element) {
         safeRef = false;
         setRefModelData(prepareName());
@@ -146,14 +130,6 @@ public class Shot {
     public Shot takeRef(WebElement element, String name) {
         safeRef = false;
         setRefModelData(prepareName(name));
-        safeRef = true;
-
-        return refScreenshot(element);
-    }
-
-    public Shot takeRef(WebElement element, String className, String testName) {
-        safeRef = false;
-        setRefModelData(prepareName(className, testName));
         safeRef = true;
 
         return refScreenshot(element);
@@ -175,14 +151,6 @@ public class Shot {
         return screenshot(element);
     }
 
-    public ShotMatching takeShot(WebElement element, String className, String testName) {
-        var name = prepareName(className, testName);
-        setRefModelData(name);
-        setShotModelData(name);
-
-        return screenshot(element);
-    }
-
     public Shot takeRef(By by) {
         safeRef = false;
         setRefModelData(prepareName());
@@ -194,14 +162,6 @@ public class Shot {
     public Shot takeRef(By by, String name) {
         safeRef = false;
         setRefModelData(prepareName(name));
-        safeRef = true;
-
-        return refScreenshot(driver.findElement(by));
-    }
-
-    public Shot takeRef(By by, String className, String testName) {
-        safeRef = false;
-        setRefModelData(prepareName(className, testName));
         safeRef = true;
 
         return refScreenshot(driver.findElement(by));
@@ -224,15 +184,6 @@ public class Shot {
         return screenshot(element);
     }
 
-    public ShotMatching takeShot(By by, String className, String testName) {
-        var name = prepareName(className, testName);
-        setRefModelData(name);
-        setShotModelData(name);
-
-        var element = driver.findElement(by);
-        return screenshot(element);
-    }
-
     private Shot refScreenshot(WebElement element) {
         prepareScreen();
 
@@ -242,8 +193,8 @@ public class Shot {
 
         refModel.image(
                 element == null ?
-                        ShotTacker.takeFullShot(driver, refModel) :
-                        ShotTacker.takeElementShot(refModel, element)
+                        ShotTaker.takeFullShot(driver, refModel) :
+                        ShotTaker.takeElementShot(refModel, element)
         );
 
         return this;
@@ -273,8 +224,8 @@ public class Shot {
 
         shotModel.image(
                 element == null ?
-                        ShotTacker.takeFullShot(driver, shotModel) :
-                        ShotTacker.takeElementShot(shotModel, element)
+                        ShotTaker.takeFullShot(driver, shotModel) :
+                        ShotTaker.takeElementShot(shotModel, element)
         );
 
         if (Boolean.FALSE.equals(isRefExist)) {
@@ -321,10 +272,6 @@ public class Shot {
         }
 
         return name;
-    }
-
-    private String prepareName(String className, String testName) {
-        return className + "#" + testName;
     }
 
     private void setRefModelData(String name) {
