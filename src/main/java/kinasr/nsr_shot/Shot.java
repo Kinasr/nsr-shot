@@ -31,7 +31,7 @@ public class Shot {
     private final List<WebElement> elements = new ArrayList<>();
     private final String shotPath;
     private final String refPath;
-    private ShotOption option;
+    private final ShotOption option;
     private Boolean safeRef = false;
 
     public Shot(WebDriver driver) {
