@@ -16,7 +16,6 @@ public class ScreenshotModel {
     private Integer width;
     private Integer height;
     private String extension = ".png";
-    private Boolean doesDirectoryCreated = false;
     private Boolean isLoaded = false;
     private byte[] image;
 
@@ -137,15 +136,6 @@ public class ScreenshotModel {
         return this;
     }
 
-    public Boolean doesDirectoryCreated() {
-        return doesDirectoryCreated;
-    }
-
-    public ScreenshotModel doesDirectoryCreated(Boolean doesDirectoryCreated) {
-        this.doesDirectoryCreated = doesDirectoryCreated;
-        return this;
-    }
-
     public byte[] image() {
         return image;
     }
@@ -174,7 +164,6 @@ public class ScreenshotModel {
                 ", width=" + width +
                 ", height=" + height +
                 ", extension='" + extension + '\'' +
-                ", doesDirectoryCreated=" + doesDirectoryCreated +
                 ", isLoaded=" + isLoaded +
                 ", image=" + Arrays.toString(image) +
                 '}';

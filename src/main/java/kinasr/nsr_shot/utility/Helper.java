@@ -11,9 +11,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Objects;
 
 import static kinasr.nsr_shot.utility.Constant.*;
 
@@ -25,38 +27,15 @@ public class Helper {
         return String.valueOf(Calendar.getInstance().getTimeInMillis());
     }
 
-    public static boolean isDirectoryExist(String path) {
-        var file = new File(path);
+    public static String prepareShotName(int depth) {
+        var walker = StackWalker.getInstance();
+        var frame = walker.walk(frames -> frames.skip(depth).findFirst().orElse(null));
 
-        return file.exists() && file.isDirectory();
-    }
+        String name = "";
+        if (frame != null)
+            name = frame.getClassName() + "#" + frame.getMethodName();
 
-    public static void moveAndRenameFile(String sourceFullPath, String destPath, String destName) {
-        try {
-            if (!isDirectoryExist(destPath)) {
-                createDirectory(destPath);
-            }
-            Files.move(Paths.get(sourceFullPath), Paths.get(destPath, destName));
-        } catch (IOException e) {
-            throw new ShotFileException("Can not rename and move <" + sourceFullPath + ">", e);
-        }
-    }
-
-    public static void createDirectory(String path) {
-        try {
-            Files.createDirectories(Paths.get(path));
-        } catch (IOException e) {
-            throw new ShotFileException("Can not create directory <" + path + ">", e);
-        }
-    }
-
-    public static String fileExtension(String fileName) {
-        var lastIndexOfPeriod = fileName.lastIndexOf(FULL_STOP);
-
-        if (lastIndexOfPeriod != -1)
-            return fileName.substring(lastIndexOfPeriod);
-
-        return null;
+        return name;
     }
 
     public static ScreenshotModel separateFullPath(String fullPath) {
@@ -126,12 +105,26 @@ public class Helper {
         return matchingFileFullPath;
     }
 
+    public static boolean isDirectoryExist(String path) {
+        var file = new File(path);
+
+        return file.exists() && file.isDirectory();
+    }
+
+    public static void createDirectory(String path) {
+        try {
+            Files.createDirectories(Paths.get(path));
+        } catch (IOException e) {
+            throw new ShotFileException("Can not create directory <" + path + ">", e);
+        }
+    }
+
     public static void saveShot(byte[] screenshot, String path, String fileName) {
         // Save the screenshot to a file
         try (FileOutputStream screenshotOutputStream = new FileOutputStream(path + fileName)) {
             screenshotOutputStream.write(screenshot);
         } catch (IOException e) {
-            if (!Files.exists(Path.of(path))) {
+            if (isDirectoryExist(path)) {
                 createDirectory(path);
                 saveShot(screenshot, path, fileName);
             } else
@@ -147,16 +140,5 @@ public class Helper {
         var jsExecutor = (JavascriptExecutor) driver;
         elements.forEach(element -> jsExecutor
                 .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
-    }
-
-    public static String prepareShotName(int depth) {
-        var walker = StackWalker.getInstance();
-        var frame = walker.walk(frames -> frames.skip(depth).findFirst().orElse(null));
-
-        String name = "";
-        if (frame != null)
-            name = frame.getClassName() + "#" + frame.getMethodName();
-
-        return name;
     }
 }
