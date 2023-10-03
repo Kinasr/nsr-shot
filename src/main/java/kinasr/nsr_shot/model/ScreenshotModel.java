@@ -3,11 +3,13 @@ package kinasr.nsr_shot.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 import static kinasr.nsr_shot.utility.Helper.separateFullPath;
 
 @SuppressWarnings("UnusedReturnValue")
-public class ShotModel {
-    private static final Logger logger = LoggerFactory.getLogger(ShotModel.class);
+public class ScreenshotModel {
+    private static final Logger logger = LoggerFactory.getLogger(ScreenshotModel.class);
     private String path;
     private String name = "";
     private String timestamp = "";
@@ -15,10 +17,11 @@ public class ShotModel {
     private Integer height;
     private String extension = ".png";
     private Boolean doesDirectoryCreated = false;
+    private Boolean isLoaded = false;
     private byte[] image;
 
-    public ShotModel fullPath(String fullPath) {
-        ShotModel tempModel = separateFullPath(fullPath);
+    public ScreenshotModel fullPath(String fullPath) {
+        ScreenshotModel tempModel = separateFullPath(fullPath);
 
         this.path = tempModel.path;
         this.name = tempModel.name;
@@ -63,7 +66,7 @@ public class ShotModel {
         return fullName.toString();
     }
 
-    public ShotModel path(String path) {
+    public ScreenshotModel path(String path) {
         this.path = path;
         return this;
     }
@@ -76,7 +79,7 @@ public class ShotModel {
         return this.name;
     }
 
-    public ShotModel name(String imageName) {
+    public ScreenshotModel name(String imageName) {
         this.name = imageName;
         return this;
     }
@@ -85,7 +88,7 @@ public class ShotModel {
         return timestamp;
     }
 
-    public ShotModel timestamp(String timestamp) {
+    public ScreenshotModel timestamp(String timestamp) {
         this.timestamp = timestamp;
         return this;
     }
@@ -94,7 +97,7 @@ public class ShotModel {
         return extension;
     }
 
-    public ShotModel extension(String extension) {
+    public ScreenshotModel extension(String extension) {
         this.extension = extension;
         return this;
     }
@@ -103,7 +106,7 @@ public class ShotModel {
         return width != null && height != null ? width + "x" + height : "";
     }
 
-    public ShotModel windowSize(String size) {
+    public ScreenshotModel windowSize(String size) {
         var dimension = size.split("x");
 
         if (dimension.length == 2) {
@@ -120,7 +123,7 @@ public class ShotModel {
         return width;
     }
 
-    public ShotModel width(Integer width) {
+    public ScreenshotModel width(Integer width) {
         this.width = width;
         return this;
     }
@@ -129,7 +132,7 @@ public class ShotModel {
         return height;
     }
 
-    public ShotModel height(Integer height) {
+    public ScreenshotModel height(Integer height) {
         this.height = height;
         return this;
     }
@@ -138,7 +141,7 @@ public class ShotModel {
         return doesDirectoryCreated;
     }
 
-    public ShotModel doesDirectoryCreated(Boolean doesDirectoryCreated) {
+    public ScreenshotModel doesDirectoryCreated(Boolean doesDirectoryCreated) {
         this.doesDirectoryCreated = doesDirectoryCreated;
         return this;
     }
@@ -147,14 +150,24 @@ public class ShotModel {
         return image;
     }
 
-    public ShotModel image(byte[] image) {
+    public ScreenshotModel image(byte[] image) {
         this.image = image;
+        this.isLoaded = true;
+        return this;
+    }
+
+    public Boolean isLoaded() {
+        return isLoaded;
+    }
+
+    public ScreenshotModel isLoaded(Boolean loaded) {
+        isLoaded = loaded;
         return this;
     }
 
     @Override
     public String toString() {
-        return "ShotModel{" +
+        return "ScreenshotModel{" +
                 "path='" + path + '\'' +
                 ", name='" + name + '\'' +
                 ", timestamp='" + timestamp + '\'' +
@@ -162,6 +175,8 @@ public class ShotModel {
                 ", height=" + height +
                 ", extension='" + extension + '\'' +
                 ", doesDirectoryCreated=" + doesDirectoryCreated +
+                ", isLoaded=" + isLoaded +
+                ", image=" + Arrays.toString(image) +
                 '}';
     }
 }

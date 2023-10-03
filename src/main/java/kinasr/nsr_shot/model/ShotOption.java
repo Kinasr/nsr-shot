@@ -20,7 +20,7 @@ public class ShotOption {
                 ConfigHandler.resizeImage(),
                 ConfigHandler.forceResizeWindow(),
                 ConfigHandler.supportFluent(),
-                ConfigHandler.supportFluent() ? 3 : 2
+                ConfigHandler.supportFluent() ? 4 : 3
         );
     }
 

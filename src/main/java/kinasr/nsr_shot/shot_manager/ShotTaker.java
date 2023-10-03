@@ -1,7 +1,7 @@
 package kinasr.nsr_shot.shot_manager;
 
 import kinasr.nsr_shot.exception.ShotFileException;
-import kinasr.nsr_shot.model.ShotModel;
+import kinasr.nsr_shot.model.ScreenshotModel;
 import kinasr.nsr_shot.utility.Helper;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -15,7 +15,7 @@ public class ShotTaker {
     private ShotTaker() {
     }
 
-    public static byte[] takeFullShot(WebDriver driver, ShotModel model) {
+    public static byte[] takeFullShot(WebDriver driver, ScreenshotModel model) {
         // Take a screenshot of the entire web page
         var screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 
@@ -25,7 +25,7 @@ public class ShotTaker {
         return screenshot;
     }
 
-    public static byte[] takeElementShot(ShotModel model, WebElement element) {
+    public static byte[] takeElementShot(ScreenshotModel model, WebElement element) {
         var screenshot = element.getScreenshotAs(OutputType.BYTES);
 
         // Save the screenshot to a file
@@ -34,7 +34,7 @@ public class ShotTaker {
         return screenshot;
     }
 
-    private static void saveShot(byte[] screenshot, ShotModel model) {
+    private static void saveShot(byte[] screenshot, ScreenshotModel model) {
         // Save the screenshot to a file
         try (FileOutputStream screenshotOutputStream = new FileOutputStream(model.fullPath())) {
             screenshotOutputStream.write(screenshot);

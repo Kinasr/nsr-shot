@@ -1,16 +1,18 @@
 package kinasr.nsr_shot.utility;
 
 import kinasr.nsr_shot.exception.ShotFileException;
-import kinasr.nsr_shot.model.ShotModel;
+import kinasr.nsr_shot.model.ScreenshotModel;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Objects;
+import java.util.*;
 
 import static kinasr.nsr_shot.utility.Constant.*;
 
@@ -56,8 +58,8 @@ public class Helper {
         return null;
     }
 
-    public static ShotModel separateFullPath(String fullPath) {
-        var shot = new ShotModel();
+    public static ScreenshotModel separateFullPath(String fullPath) {
+        var shot = new ScreenshotModel();
         var path = "";
 
         var lastSeparatorIndex = fullPath.lastIndexOf("\\");
@@ -76,8 +78,8 @@ public class Helper {
         return shot.path(path);
     }
 
-    public static ShotModel separateFullName(String fullName) {
-        var shot = new ShotModel();
+    public static ScreenshotModel separateFullName(String fullName) {
+        var shot = new ScreenshotModel();
 
         var exLastIndex = fullName.lastIndexOf(FULL_STOP);
         if (exLastIndex != -1) {
@@ -123,7 +125,7 @@ public class Helper {
         return matchingFileFullPath;
     }
 
-    public static void saveShot(byte[] screenshot, ShotModel model) {
+    public static void saveShot(byte[] screenshot, ScreenshotModel model) {
         // Save the screenshot to a file
         try (FileOutputStream screenshotOutputStream = new FileOutputStream(model.fullPath())) {
             screenshotOutputStream.write(screenshot);
@@ -136,5 +138,26 @@ public class Helper {
             } else
                 throw new ShotFileException("Can not save this screenshot <" + model.fullPath() + ">", e);
         }
+    }
+
+    public static void hideUnwantedElements(WebDriver driver, List<By> locators, List<WebElement> elements) {
+        for (By locator : locators) {
+            elements.add(driver.findElement(locator));
+        }
+
+        var jsExecutor = (JavascriptExecutor) driver;
+        elements.forEach(element -> jsExecutor
+                .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
+    }
+
+    public static String prepareShotName(int depth) {
+            var walker = StackWalker.getInstance();
+            var frame = walker.walk(frames -> frames.skip(depth).findFirst().orElse(null));
+
+            String name = "";
+            if (frame != null)
+                name = frame.getClassName() + "#" + frame.getMethodName();
+
+            return name;
     }
 }
