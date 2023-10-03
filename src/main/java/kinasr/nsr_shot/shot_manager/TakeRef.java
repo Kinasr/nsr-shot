@@ -1,27 +1,20 @@
 package kinasr.nsr_shot.shot_manager;
 
-import kinasr.nsr_shot.Shot;
-import kinasr.nsr_shot.exception.ShotFileException;
 import kinasr.nsr_shot.model.ScreenshotModel;
 import kinasr.nsr_shot.model.ShotAttribute;
 import kinasr.nsr_shot.model.ShotOption;
-import kinasr.nsr_shot.utility.Helper;
 import kinasr.nsr_shot.utility.config.ConfigHandler;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
-import static kinasr.nsr_shot.utility.Constant.NAME_SPLITTER;
 import static kinasr.nsr_shot.utility.Constant.REF_IMAGE_STAMP;
-import static kinasr.nsr_shot.utility.Helper.getFileFullPathWithPrefix;
 import static kinasr.nsr_shot.utility.Helper.hideUnwantedElements;
+import static kinasr.nsr_shot.utility.Helper.saveShot;
 
 public class TakeRef {
     private final WebDriver driver;
@@ -81,9 +74,12 @@ public class TakeRef {
 
         ref.image(
                 element == null ?
-                        ShotTaker.takeFullShot(driver, ref) :
-                        ShotTaker.takeElementShot(ref, element)
+                        ShotTaker.takeFullShot(driver) :
+                        ShotTaker.takeElementShot(element)
         );
+
+        if (ConfigHandler.saveOnFlyRef())
+            saveShot(ref.image(), ref.path(), ref.fullName());
 
         return new TakeShot(
                 driver,

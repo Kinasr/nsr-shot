@@ -4,27 +4,23 @@ import kinasr.nsr_shot.exception.ShotFileException;
 import kinasr.nsr_shot.model.ScreenshotModel;
 import kinasr.nsr_shot.model.ShotAttribute;
 import kinasr.nsr_shot.model.ShotOption;
-import kinasr.nsr_shot.shot_manager.ShotTaker;
 import kinasr.nsr_shot.shot_manager.ShotMatching;
 import kinasr.nsr_shot.shot_manager.TakeRef;
 import kinasr.nsr_shot.shot_manager.TakeShot;
-import kinasr.nsr_shot.utility.Helper;
 import kinasr.nsr_shot.utility.config.ConfigHandler;
-import org.bytedeco.opencv.presets.opencv_core;
-import org.openqa.selenium.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static kinasr.nsr_shot.utility.Constant.NAME_SPLITTER;
 import static kinasr.nsr_shot.utility.Constant.REF_IMAGE_STAMP;
-import static kinasr.nsr_shot.utility.Helper.*;
+import static kinasr.nsr_shot.utility.Helper.getFileFullPathWithPrefix;
+import static kinasr.nsr_shot.utility.Helper.prepareShotName;
 
 public class Shot {
     private final WebDriver driver;

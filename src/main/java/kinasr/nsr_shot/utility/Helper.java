@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -125,18 +126,16 @@ public class Helper {
         return matchingFileFullPath;
     }
 
-    public static void saveShot(byte[] screenshot, ScreenshotModel model) {
+    public static void saveShot(byte[] screenshot, String path, String fileName) {
         // Save the screenshot to a file
-        try (FileOutputStream screenshotOutputStream = new FileOutputStream(model.fullPath())) {
+        try (FileOutputStream screenshotOutputStream = new FileOutputStream(path + fileName)) {
             screenshotOutputStream.write(screenshot);
         } catch (IOException e) {
-            if (Boolean.FALSE.equals(model.doesDirectoryCreated())) {
-                model.doesDirectoryCreated(true);
-
-                Helper.createDirectory(model.path());
-                saveShot(screenshot, model);
+            if (!Files.exists(Path.of(path))) {
+                createDirectory(path);
+                saveShot(screenshot, path, fileName);
             } else
-                throw new ShotFileException("Can not save this screenshot <" + model.fullPath() + ">", e);
+                throw new ShotFileException("Can not save this screenshot <" + path + fileName + ">", e);
         }
     }
 
@@ -151,13 +150,13 @@ public class Helper {
     }
 
     public static String prepareShotName(int depth) {
-            var walker = StackWalker.getInstance();
-            var frame = walker.walk(frames -> frames.skip(depth).findFirst().orElse(null));
+        var walker = StackWalker.getInstance();
+        var frame = walker.walk(frames -> frames.skip(depth).findFirst().orElse(null));
 
-            String name = "";
-            if (frame != null)
-                name = frame.getClassName() + "#" + frame.getMethodName();
+        String name = "";
+        if (frame != null)
+            name = frame.getClassName() + "#" + frame.getMethodName();
 
-            return name;
+        return name;
     }
 }

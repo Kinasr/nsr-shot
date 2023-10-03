@@ -12,11 +12,13 @@ import static kinasr.nsr_shot.utility.config.ConfigHelper.fetchData;
 public class ConfigHandler {
     private static final ConfigRecord<String> actualPath = new ConfigRecord<>("shot.actual-path");
     private static final ConfigRecord<String> expectedPath = new ConfigRecord<>("shot.expected-path");
-    private static final ConfigRecord<Boolean> supportFluent = new ConfigRecord<>("shot.support-fluent");
+    private static final ConfigRecord<Boolean> saveShot = new ConfigRecord<>("shot.flags.save-shot");
+    private static final ConfigRecord<Boolean> saveOnFlyRef = new ConfigRecord<>("shot.flags.save-on-fly-ref");
+    private static final ConfigRecord<Boolean> supportFluent = new ConfigRecord<>("shot.flags.support-fluent");
     private static final ConfigRecord<Boolean> resizeImage =
-            new ConfigRecord<>("shot.resize-ref-image-to-match-shot-image-size");
+            new ConfigRecord<>("shot.flags.resize-ref-image-to-match-shot-image-size");
     private static final ConfigRecord<Boolean> forceResizeWindow =
-            new ConfigRecord<>("shot.force-resize-window-to-match-the-reference");
+            new ConfigRecord<>("shot.flags.force-resize-window-to-match-the-reference");
     private static final ConfigRecord<List<TechniqueRecord>> techniques = new ConfigRecord<>("shot.techniques");
 
     private ConfigHandler() {
@@ -30,6 +32,16 @@ public class ConfigHandler {
     public static String refPath() {
         return fetchData(expectedPath, key -> configReader().get(key).asString())
                 .orElse("src/test/resources/shot_images/expected/");
+    }
+
+    public static Boolean saveShot() {
+        return fetchData(saveShot, key -> configReader().get(key).asBoolean())
+                .orElse(true);
+    }
+
+    public static Boolean saveOnFlyRef() {
+        return fetchData(saveOnFlyRef, key -> configReader().get(key).asBoolean())
+                .orElse(true);
     }
 
     public static Boolean supportFluent() {

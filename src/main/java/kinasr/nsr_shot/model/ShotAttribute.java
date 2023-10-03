@@ -8,8 +8,8 @@ import java.util.List;
 
 public class ShotAttribute {
     private String name;
-    private List<By> locators = new ArrayList<>();
-    private List<WebElement> elements = new ArrayList<>();
+    private final List<By> locators = new ArrayList<>();
+    private final List<WebElement> elements = new ArrayList<>();
 
     public ShotAttribute name(String name) {
         this.name = name;

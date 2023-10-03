@@ -3,17 +3,12 @@ package kinasr.nsr_shot.shot_manager;
 import kinasr.nsr_shot.model.ScreenshotModel;
 import kinasr.nsr_shot.model.ShotAttribute;
 import kinasr.nsr_shot.model.ShotOption;
-import kinasr.nsr_shot.utility.Helper;
 import kinasr.nsr_shot.utility.config.ConfigHandler;
 import org.openqa.selenium.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static kinasr.nsr_shot.utility.Helper.hideUnwantedElements;
-import static kinasr.nsr_shot.utility.Helper.timestamp;
+import static kinasr.nsr_shot.utility.Helper.*;
 
 public class TakeShot {
     private static final Logger logger = LoggerFactory.getLogger(TakeShot.class);
@@ -51,6 +46,12 @@ public class TakeShot {
         return screenshot(element);
     }
 
+    private void setShotModelData(String name) {
+        shot.path(ConfigHandler.shotPath())
+                .name(name)
+                .timestamp(timestamp());
+    }
+
     private ShotMatching screenshot(WebElement element) {
         hideUnwantedElements(driver, attribute.locators(), attribute.elements());
 
@@ -75,28 +76,21 @@ public class TakeShot {
 
         shot.image(
                 element == null ?
-                        ShotTaker.takeFullShot(driver, shot) :
-                        ShotTaker.takeElementShot(shot, element)
+                        ShotTaker.takeFullShot(driver) :
+                        ShotTaker.takeElementShot(element)
         );
 
         if (!ref.isLoaded()){
             ref.width(shot.width()).height(shot.height());
-            saveRefImageAndThrow();
+            saveShot(shot.image(), ref.path(), ref.fullName());
+
+            throw new AssertionError("No reference image found, " +
+                    "actual shot has been transferred to be reference");
         }
 
+        if (ConfigHandler.saveShot())
+            saveShot(shot.image(), shot.path(), shot.fullName());
+
         return new ShotMatching(shot, ref, option.resizeImage());
-    }
-
-    private void setShotModelData(String name) {
-        shot.path(ConfigHandler.shotPath())
-                .name(name)
-                .timestamp(timestamp());
-    }
-
-    private void saveRefImageAndThrow() {
-        Helper.moveAndRenameFile(shot.fullPath(), ref.path(), ref.fullName());
-
-        throw new AssertionError("No reference image found, " +
-                "actual shot has been transferred to be reference");
     }
 }

@@ -5,9 +5,9 @@ shot:
   flags:
     save-shot: true
     save-on-fly-ref: true
-  support-fluent: false
-  resize-ref-image-to-match-shot-image-size: true
-  force-resize-window-to-match-the-reference: true
+    support-fluent: false
+    resize-ref-image-to-match-shot-image-size: true
+    force-resize-window-to-match-the-reference: true
 
   techniques:
     - technique: SSI
