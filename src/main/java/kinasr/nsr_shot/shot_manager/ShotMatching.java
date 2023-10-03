@@ -11,12 +11,12 @@ import java.util.List;
 
 public class ShotMatching {
     private static final Logger logger = LoggerFactory.getLogger(ShotMatching.class);
-    private final ShotModel shotModel;
-    private final ShotModel refModel;
+    private final ScreenshotModel shotModel;
+    private final ScreenshotModel refModel;
     private final Boolean resizeImage;
     private List<TechniqueRecord> techniques = new ArrayList<>();
 
-    public ShotMatching(ShotModel shotModel, ShotModel refModel, Boolean resizeImage) {
+    public ShotMatching(ScreenshotModel shotModel, ScreenshotModel refModel, Boolean resizeImage) {
         this.shotModel = shotModel;
         this.refModel = refModel;
         this.resizeImage = resizeImage;
