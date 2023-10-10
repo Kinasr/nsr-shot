@@ -4,6 +4,7 @@ import kinasr.nsr_shot.exception.ShotFileException;
 import kinasr.nsr_shot.model.ScreenshotModel;
 import kinasr.nsr_shot.model.ShotAttribute;
 import kinasr.nsr_shot.model.ShotOption;
+import kinasr.nsr_shot.shot_manager.ShotExecutor;
 import kinasr.nsr_shot.shot_manager.ShotMatching;
 import kinasr.nsr_shot.shot_manager.TakeRef;
 import kinasr.nsr_shot.shot_manager.TakeShot;
@@ -106,6 +107,15 @@ public class Shot {
                 option,
                 loadRef()
         ).takeShot();
+    }
+
+    public ShotExecutor takeShot2() {
+        return new TakeShot(
+                driver,
+                attribute,
+                option,
+                loadRef()
+        ).takeShot2();
     }
 
     public ShotMatching takeShot(By by) {

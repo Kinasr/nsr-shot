@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BooleanSupplier;
 
 import static kinasr.nsr_shot.utility.Constant.*;
 
@@ -124,7 +125,7 @@ public class Helper {
         try (FileOutputStream screenshotOutputStream = new FileOutputStream(path + fileName)) {
             screenshotOutputStream.write(screenshot);
         } catch (IOException e) {
-            if (isDirectoryExist(path)) {
+            if (!isDirectoryExist(path)) {
                 createDirectory(path);
                 saveShot(screenshot, path, fileName);
             } else
@@ -140,5 +141,22 @@ public class Helper {
         var jsExecutor = (JavascriptExecutor) driver;
         elements.forEach(element -> jsExecutor
                 .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
+    }
+
+    public static boolean await(int repeat, long interval, BooleanSupplier function) {
+        do {
+            if (function.getAsBoolean())
+                return true;
+
+            if (repeat > 0) {
+                try {
+                    Thread.sleep(interval);
+                } catch (InterruptedException e) {
+                    // ignore and return false
+                }
+            }
+        } while (repeat-- > 0);
+
+        return false;
     }
 }

@@ -38,21 +38,20 @@ public class ShotMatching {
         }
     }
 
-    public MatchingResult isMatch() {
+    public ShotResult isMatch() {
+        return isMatch(refModel.image(),
+                refModel.fullPath(),
+                shotModel.image(),
+                shotModel.fullPath());
+    }
+
+    private ShotResult isMatch(byte[] refImg, String refPath, byte[] shotImg, String shotPath) {
         var isMatch = true;
         if (techniques.isEmpty())
             techniques = ConfigHandler.techniques();
 
-        var cv = new CVManager(shotModel.image(), refModel.image());
-        var shotSize = cv.image1Size();
-        var refSize = cv.image2Size();
-
-        if (Boolean.TRUE.equals(resizeImage))
-            cv.resizeImg2ToMatchImg1();
-        else if (!cv.isTheTwoImagesHaveTheSameSize())
-            throw new AssertionError("The two images are not the same size. - Shot size <" +
-                    shotSize.width() + "*" + shotSize.height() + "> - Reference size <" +
-                    refSize.width() + "*" + refSize.height() + ">");
+        var cv = new CVManager(refImg, shotImg);
+        checkImageSize(cv);
 
         var msg = new StringBuilder();
         for (TechniqueRecord techniqueRecord : techniques) {
@@ -72,18 +71,35 @@ public class ShotMatching {
         msg.append("]");
         cv.close();
 
-        var result = new MatchingResult(
+        var result = new ShotResult(
                 isMatch,
-                new ShotRecord(refModel.image(), refModel.fullPath())
+                new ShotRecord(refImg, refPath)
         );
         if (Boolean.TRUE.equals(isMatch)) {
-            result.addMatchedShot(new ShotRecord(shotModel.image(), shotModel.fullPath()));
+            result.addMatchedShot(new ShotRecord(shotImg, shotPath));
             logger.info("Assert that shot matching the reference using [\n{}", msg);
         } else {
-            result.addShot(new ShotRecord(shotModel.image(), shotModel.fullPath()));
+            result.addShot(new ShotRecord(shotImg, shotPath));
             logger.warn("Image not match the reference using [\n{}", msg);
+
+            if (ConfigHandler.retakeShot() > 0) {
+                // sleep for some time
+
+                // take shot again and compare
+            }
         }
 
         return result;
+    }
+
+    private void checkImageSize(CVManager cv) {
+        try (var shotSize = cv.image1Size(); var refSize = cv.image2Size()) {
+            if (Boolean.TRUE.equals(resizeImage))
+                cv.resizeImg2ToMatchImg1();
+            else if (!cv.isTheTwoImagesHaveTheSameSize())
+                throw new AssertionError("The two images are not the same size. - Shot size <" +
+                        shotSize.width() + "*" + shotSize.height() + "> - Reference size <" +
+                        refSize.width() + "*" + refSize.height() + ">");
+        }
     }
 }

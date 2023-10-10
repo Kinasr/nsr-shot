@@ -40,6 +40,16 @@ public class IntegrationTest {
     }
 
     @Test
+    void checkThatPageIsVisuallyCorrect2() throws InterruptedException {
+        Thread.sleep(1000);
+       var r = new Shot(driver)
+                .takeShot2()
+                .perform();
+
+       Assertions.assertTrue(r.isMatch());
+    }
+
+    @Test
     void checkLoginDialogIsVisuallyCorrect() {
         new Shot(driver)
                 .takeShot(dialogLogin)
