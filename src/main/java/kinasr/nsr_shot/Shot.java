@@ -5,7 +5,6 @@ import kinasr.nsr_shot.model.ScreenshotModel;
 import kinasr.nsr_shot.model.ShotAttribute;
 import kinasr.nsr_shot.model.ShotOption;
 import kinasr.nsr_shot.shot_manager.ShotExecutor;
-import kinasr.nsr_shot.shot_manager.ShotMatching;
 import kinasr.nsr_shot.shot_manager.TakeRef;
 import kinasr.nsr_shot.shot_manager.TakeShot;
 import kinasr.nsr_shot.utility.config.ConfigHandler;
@@ -100,7 +99,7 @@ public class Shot {
         ).takeRef(element);
     }
 
-    public ShotMatching takeShot() {
+    public ShotExecutor takeShot() {
         return new TakeShot(
                 driver,
                 attribute,
@@ -109,16 +108,7 @@ public class Shot {
         ).takeShot();
     }
 
-    public ShotExecutor takeShot2() {
-        return new TakeShot(
-                driver,
-                attribute,
-                option,
-                loadRef()
-        ).takeShot2();
-    }
-
-    public ShotMatching takeShot(By by) {
+    public ShotExecutor takeShot(By by) {
         return new TakeShot(
                 driver,
                 attribute,
@@ -127,7 +117,7 @@ public class Shot {
         ).takeShot(by);
     }
 
-    public ShotMatching takeShot(WebElement element) {
+    public ShotExecutor takeShot(WebElement element) {
         return new TakeShot(
                 driver,
                 attribute,

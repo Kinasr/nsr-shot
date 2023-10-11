@@ -15,7 +15,7 @@ import java.util.List;
 import static kinasr.nsr_shot.utility.Helper.saveShot;
 
 public class ShotExecutor {
-    private static final Logger logger = LoggerFactory.getLogger(ShotMatching.class);
+    private static final Logger logger = LoggerFactory.getLogger(ShotExecutor.class);
 
     private final WebDriver driver;
     private final WebElement element;
@@ -66,9 +66,9 @@ public class ShotExecutor {
 
     private boolean isMatch() {
         msg = new StringBuilder();
-        screenshot();
 
-        var isMatch = isMatch(ref.image(), shot.image());
+        var cv = screenshot();
+        var isMatch = isMatch(cv);
 
         if (Boolean.TRUE.equals(isMatch)) {
             result.addMatchedShot(new ShotRecord(shot.image(), shot.fullPath()));
@@ -77,17 +77,15 @@ public class ShotExecutor {
             result.addShot(new ShotRecord(shot.image(), shot.fullPath()));
             logger.warn("Image not match the reference using [\n{}", msg);
         }
+        cv.close();
 
         return isMatch;
     }
 
-    private boolean isMatch(byte[] refImg, byte[] shotImg) {
+    private boolean isMatch(CVManager cv) {
         var isMatch = true;
         if (techniques.isEmpty())
             techniques = ConfigHandler.techniques();
-
-        var cv = new CVManager(refImg, shotImg);
-        checkImageSize(cv);
 
         for (TechniqueRecord techniqueRecord : techniques) {
             var diff = cv.getDiff(techniqueRecord.technique());
@@ -104,7 +102,6 @@ public class ShotExecutor {
                     .append("\n");
         }
         msg.append("]");
-        cv.close();
 
         return isMatch;
     }
@@ -113,14 +110,14 @@ public class ShotExecutor {
         try (var shotSize = cv.image1Size(); var refSize = cv.image2Size()) {
             if (Boolean.TRUE.equals(option.resizeImage()))
                 cv.resizeImg2ToMatchImg1();
-            else if (!cv.isTheTwoImagesHaveTheSameSize())
+            else if (cv.isNotTheTwoImagesHaveTheSameSize())
                 throw new AssertionError("The two images are not the same size. - Shot size <" +
                         shotSize.width() + "*" + shotSize.height() + "> - Reference size <" +
                         refSize.width() + "*" + refSize.height() + ">");
         }
     }
 
-    private void screenshot() {
+    private CVManager screenshot() {
         shot.image(element == null ?
                 ShotTaker.takeFullShot(driver) :
                 ShotTaker.takeElementShot(element));
@@ -128,10 +125,14 @@ public class ShotExecutor {
         if (!ref.isLoaded())
             saveRefAndThrow();
 
+        var cv = new CVManager(ref.image(), shot.image());
+        checkImageSize(cv);
+
         if (ConfigHandler.saveShot()) {
             shot.timestamp(Helper.timestamp());
             saveShot(shot.image(), shot.path(), shot.fullName());
         }
+        return cv;
     }
 
     private void saveRefAndThrow() {

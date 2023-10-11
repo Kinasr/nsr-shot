@@ -11,12 +11,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 public class IntegrationTest {
-    private WebDriver driver;
-
     // region Locators
     private final By dialogLogin = By.className("login_wrapper-inner");
     private final By dialogLoginCredentials = By.className("login_credentials_wrap-inner");
     private final By wrapperLogin = By.className("login_wrapper");
+    private WebDriver driver;
     // endregion
 
     @BeforeEach
@@ -36,24 +35,14 @@ public class IntegrationTest {
     void checkThatPageIsVisuallyCorrect() {
         new Shot(driver)
                 .takeShot()
-                .assertThatShotMatchReference();
-    }
-
-    @Test
-    void checkThatPageIsVisuallyCorrect2() throws InterruptedException {
-        Thread.sleep(1000);
-       var r = new Shot(driver)
-                .takeShot2()
-                .perform();
-
-       Assertions.assertTrue(r.isMatch());
+                .verify();
     }
 
     @Test
     void checkLoginDialogIsVisuallyCorrect() {
         new Shot(driver)
                 .takeShot(dialogLogin)
-                .assertThatShotMatchReference();
+                .verify();
     }
 
     @Test
@@ -61,7 +50,7 @@ public class IntegrationTest {
         new Shot(driver)
                 .ignoreElement(dialogLoginCredentials)
                 .takeShot()
-                .assertThatShotMatchReference();
+                .verify();
     }
 
     @Test
@@ -69,7 +58,7 @@ public class IntegrationTest {
         new Shot(driver)
                 .ignoreElement(dialogLoginCredentials)
                 .takeShot(wrapperLogin)
-                .assertThatShotMatchReference();
+                .verify();
     }
 
     @Test
@@ -79,17 +68,17 @@ public class IntegrationTest {
         driver.navigate().refresh();
 
         shot.takeShot(wrapperLogin)
-                .assertThatShotMatchReference();
+                .verify();
     }
 
     @Test
     void checkThatShotResultsHasSomeResults() {
         var result = new Shot(driver)
                 .takeShot()
-                .isMatch();
+                .perform();
 
         Assertions.assertTrue(result.isMatch());
         Assertions.assertTrue(result.ref().image().length > 0);
-        Assertions.assertTrue(result.matchedShot().image().length >  0);
+        Assertions.assertTrue(result.matchedShot().image().length > 0);
     }
 }

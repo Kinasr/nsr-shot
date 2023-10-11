@@ -1,6 +1,6 @@
 package kinasr.nsr_shot.exception;
 
-public class ShotFileException extends RuntimeException{
+public class ShotFileException extends RuntimeException {
 
     public ShotFileException(String message) {
         super(message);

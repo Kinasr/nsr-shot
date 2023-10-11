@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShotResult {
-    private boolean isMatch;
     private final ShotRecord ref;
     private final List<ShotRecord> shots = new ArrayList<>();
+    private boolean isMatch;
     private ShotRecord matchedShot = null;
 
     public ShotResult(ShotRecord ref) {
