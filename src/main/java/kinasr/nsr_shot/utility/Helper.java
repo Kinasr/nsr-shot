@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BooleanSupplier;
 
 import static kinasr.nsr_shot.utility.Constant.*;
 
@@ -124,7 +125,7 @@ public class Helper {
         try (FileOutputStream screenshotOutputStream = new FileOutputStream(path + fileName)) {
             screenshotOutputStream.write(screenshot);
         } catch (IOException e) {
-            if (isDirectoryExist(path)) {
+            if (!isDirectoryExist(path)) {
                 createDirectory(path);
                 saveShot(screenshot, path, fileName);
             } else
@@ -140,5 +141,34 @@ public class Helper {
         var jsExecutor = (JavascriptExecutor) driver;
         elements.forEach(element -> jsExecutor
                 .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
+    }
+
+    /**
+     * Repeatedly calls the provided function until it returns true, or the maximum number of repeats is reached.
+     *
+     * @param repeat   The maximum number of repeats.
+     * @param interval The interval in milliseconds between each repeat.
+     * @param function The function to be called repeatedly.
+     * @return True if the function returns true within the specified repeats, false otherwise.
+     */
+    public static boolean await(int repeat, long interval, BooleanSupplier function) {
+        // Repeat the loop until the maximum number of repeats is reached
+        do {
+            // Check if the function returns true
+            if (function.getAsBoolean())
+                return true;
+
+            // Sleep for the specified interval if there are more repeats to be done
+            if (repeat > 0) {
+                try {
+                    Thread.sleep(interval);
+                } catch (InterruptedException e) {
+                    // Ignore the exception and return false
+                }
+            }
+        } while (repeat-- > 0);
+
+        // Return false if the function does not return true within the specified repeats
+        return false;
     }
 }

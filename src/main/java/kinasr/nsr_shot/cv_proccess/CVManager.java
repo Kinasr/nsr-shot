@@ -8,7 +8,8 @@ import org.bytedeco.opencv.global.opencv_imgproc;
 import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.Size;
 
-import static org.bytedeco.opencv.global.opencv_imgcodecs.*;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.IMREAD_COLOR;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.imdecode;
 import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 
 public class CVManager {
@@ -43,15 +44,15 @@ public class CVManager {
         Mat ssiResult = new Mat();
         opencv_imgproc.matchTemplate(image1, image2, ssiResult, opencv_imgproc.TM_CCOEFF_NORMED);
 
-        try(Indexer indexer= ssiResult.createIndexer()) {
+        try (Indexer indexer = ssiResult.createIndexer()) {
             return indexer.getDouble();
         }
     }
 
-    public boolean isTheTwoImagesHaveTheSameSize() {
+    public boolean isNotTheTwoImagesHaveTheSameSize() {
         var img1Size = img1.size();
         var img2Size = img2.size();
-        return img1Size.width() == img2Size.width() && img1Size.height() == img2Size.height();
+        return img1Size.width() != img2Size.width() || img1Size.height() != img2Size.height();
     }
 
     public Size image1Size() {

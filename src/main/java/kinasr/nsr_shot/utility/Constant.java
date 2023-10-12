@@ -7,5 +7,6 @@ public class Constant {
     public static final String EMPTY_STRING = "";
     public static final String REF_IMAGE_STAMP = "ref";
 
-    private Constant() {}
+    private Constant() {
+    }
 }

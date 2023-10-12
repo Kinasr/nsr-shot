@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShotAttribute {
-    private String name;
     private final List<By> locators = new ArrayList<>();
     private final List<WebElement> elements = new ArrayList<>();
+    private String name;
 
     public ShotAttribute name(String name) {
         this.name = name;

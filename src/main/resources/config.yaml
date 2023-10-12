@@ -2,6 +2,9 @@ shot:
   actual-path: src/test/resources/shot_images/actual/
   expected-path: src/test/resources/shot_images/expected/
 
+  retake-shot: 3
+  retake-shot-interval: 1000
+
   flags:
     save-shot: true
     save-on-fly-ref: true

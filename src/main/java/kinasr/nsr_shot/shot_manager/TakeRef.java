@@ -23,8 +23,8 @@ public class TakeRef {
     private final ScreenshotModel ref = new ScreenshotModel();
 
     public TakeRef(WebDriver driver,
-                    ShotAttribute attribute,
-                    ShotOption option) {
+                   ShotAttribute attribute,
+                   ShotOption option) {
         this.driver = driver;
         this.attribute = attribute;
         this.option = option;
