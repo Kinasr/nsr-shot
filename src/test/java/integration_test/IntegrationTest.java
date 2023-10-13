@@ -81,4 +81,12 @@ public class IntegrationTest {
         Assertions.assertTrue(result.ref().image().length > 0);
         Assertions.assertTrue(result.matchedShot().image().length > 0);
     }
+
+    @Test
+    void ignoreMultiElementsWithSingleSelector() {
+        new Shot(driver)
+                .ignoreElement(By.tagName("h4"))
+                .takeShot()
+                .verify();
+    }
 }

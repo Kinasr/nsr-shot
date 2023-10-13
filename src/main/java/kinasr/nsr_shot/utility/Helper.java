@@ -2,10 +2,7 @@ package kinasr.nsr_shot.utility;
 
 import kinasr.nsr_shot.exception.ShotFileException;
 import kinasr.nsr_shot.model.ScreenshotModel;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -135,7 +132,11 @@ public class Helper {
 
     public static void hideUnwantedElements(WebDriver driver, List<By> locators, List<WebElement> elements) {
         for (By locator : locators) {
-            elements.add(driver.findElement(locator));
+            var e = driver.findElements(locator);
+            if (e.isEmpty())
+                throw new NoSuchElementException("Can not find this element <" + locator + ">");
+
+            elements.addAll(e);
         }
 
         var jsExecutor = (JavascriptExecutor) driver;
