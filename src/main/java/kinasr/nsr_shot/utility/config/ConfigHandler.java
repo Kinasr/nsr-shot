@@ -50,7 +50,7 @@ public class ConfigHandler {
 
     public static Integer multiRef() {
         return fetchData(multiRef, key -> configReader().get(key).asInteger())
-                .orElse(0);
+                .orElse(1);
     }
 
     public static Long multiRefInterval() {

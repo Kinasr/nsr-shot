@@ -129,7 +129,7 @@ public class Shot {
     private ScreenshotModel loadRef() {
         var fullPath = getFileFullPathWithPrefix(
                 ConfigHandler.refPath(),
-                attribute.name() + NAME_SPLITTER + REF_IMAGE_STAMP
+                attribute.name() + NAME_SPLITTER + REF_IMAGE_STAMP + NAME_SPLITTER
         );
 
         if (fullPath.isEmpty())
