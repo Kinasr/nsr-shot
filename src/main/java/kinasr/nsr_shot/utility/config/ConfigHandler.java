@@ -14,6 +14,8 @@ public class ConfigHandler {
     private static final ConfigRecord<String> expectedPath = new ConfigRecord<>("shot.expected-path");
     private static final ConfigRecord<Integer> retakeShot = new ConfigRecord<>("shot.retake-shot");
     private static final ConfigRecord<Long> retakeShotInterval = new ConfigRecord<>("shot.retake-shot-interval");
+    private static final ConfigRecord<Integer> multiRef = new ConfigRecord<>("shot.multi-ref");
+    private static final ConfigRecord<Long> multiRefInterval = new ConfigRecord<>("shot.multi-ref-interval");
     private static final ConfigRecord<Boolean> saveShot = new ConfigRecord<>("shot.flags.save-shot");
     private static final ConfigRecord<Boolean> saveOnFlyRef = new ConfigRecord<>("shot.flags.save-on-fly-ref");
     private static final ConfigRecord<Boolean> supportFluent = new ConfigRecord<>("shot.flags.support-fluent");
@@ -43,6 +45,16 @@ public class ConfigHandler {
 
     public static Long retakeShotInterval() {
         return fetchData(retakeShotInterval, key -> configReader().get(key).asLong())
+                .orElse(1000L);
+    }
+
+    public static Integer multiRef() {
+        return fetchData(multiRef, key -> configReader().get(key).asInteger())
+                .orElse(1);
+    }
+
+    public static Long multiRefInterval() {
+        return fetchData(multiRefInterval, key -> configReader().get(key).asLong())
                 .orElse(1000L);
     }
 

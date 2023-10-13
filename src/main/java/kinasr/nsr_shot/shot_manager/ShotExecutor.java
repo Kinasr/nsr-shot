@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kinasr.nsr_shot.utility.Constant.REF_IMAGE_STAMP;
 import static kinasr.nsr_shot.utility.Helper.saveShot;
 
 public class ShotExecutor {
@@ -118,9 +119,7 @@ public class ShotExecutor {
     }
 
     private CVManager screenshot() {
-        shot.image(element == null ?
-                ShotTaker.takeFullShot(driver) :
-                ShotTaker.takeElementShot(element));
+        shot.image(takeShot(element));
 
         if (!ref.isLoaded())
             saveRefAndThrow();
@@ -135,9 +134,24 @@ public class ShotExecutor {
         return cv;
     }
 
+    private byte[] takeShot(WebElement element) {
+        return element == null ?
+                ShotTaker.takeFullShot(driver) :
+                ShotTaker.takeElementShot(element);
+    }
+
     private void saveRefAndThrow() {
         ref.width(shot.width()).height(shot.height());
         saveShot(shot.image(), ref.path(), ref.fullName());
+
+        Helper.repeat(ConfigHandler.multiRef(), ConfigHandler.multiRefInterval(),
+                (count) -> {
+                    var img = takeShot(element);
+                    ref.timestamp(REF_IMAGE_STAMP + "(" + count + ")");
+
+                    saveShot(img, ref.path(), ref.fullName());
+                }
+        );
 
         throw new AssertionError("No reference image found, " +
                 "actual shot has been transferred to be reference");

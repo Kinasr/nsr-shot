@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
+import java.util.function.IntConsumer;
 
 import static kinasr.nsr_shot.utility.Constant.*;
 
@@ -149,14 +150,14 @@ public class Helper {
      *
      * @param repeat   The maximum number of repeats.
      * @param interval The interval in milliseconds between each repeat.
-     * @param function The function to be called repeatedly.
+     * @param supplier The function to be called repeatedly.
      * @return True if the function returns true within the specified repeats, false otherwise.
      */
-    public static boolean await(int repeat, long interval, BooleanSupplier function) {
+    public static boolean await(int repeat, long interval, BooleanSupplier supplier) {
         // Repeat the loop until the maximum number of repeats is reached
         do {
             // Check if the function returns true
-            if (function.getAsBoolean())
+            if (supplier.getAsBoolean())
                 return true;
 
             // Sleep for the specified interval if there are more repeats to be done
@@ -171,5 +172,23 @@ public class Helper {
 
         // Return false if the function does not return true within the specified repeats
         return false;
+    }
+
+    /**
+     * Repeats a consumer function a specified number of times with a given interval.
+     *
+     * @param repeat    The number of times to repeat the consumer function.
+     * @param interval  The interval between each repetition in milliseconds.
+     * @param consumer  The consumer function to be repeated.
+     */
+    public static void repeat(int repeat, long interval, IntConsumer consumer) {
+        for (int i = 1; i < repeat; i++) {
+            consumer.accept(i);
+            try {
+                Thread.sleep(interval);
+            } catch (InterruptedException e) {
+                // Ignore the exception
+            }
+        }
     }
 }

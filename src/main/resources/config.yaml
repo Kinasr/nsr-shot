@@ -4,6 +4,9 @@ shot:
 
   retake-shot: 3
   retake-shot-interval: 1000
+  # >= 1
+  multi-ref: 3
+  multi-ref-interval: 1000
 
   flags:
     save-shot: true
