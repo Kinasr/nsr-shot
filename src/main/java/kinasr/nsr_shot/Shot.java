@@ -128,13 +128,13 @@ public class Shot {
 
     private ScreenshotModel loadRef() {
         var fullPath = getFileFullPathWithPrefix(
-                ConfigHandler.refPath(),
+                ConfigHandler.refDirectory(),
                 attribute.name() + NAME_SPLITTER + REF_IMAGE_STAMP + NAME_SPLITTER
         );
 
         if (fullPath.isEmpty())
             return new ScreenshotModel()
-                    .path(ConfigHandler.refPath())
+                    .path(ConfigHandler.refDirectory())
                     .name(attribute.name())
                     .timestamp(REF_IMAGE_STAMP);
 

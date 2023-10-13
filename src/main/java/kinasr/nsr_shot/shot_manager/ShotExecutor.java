@@ -53,7 +53,7 @@ public class ShotExecutor {
         result = new ShotResult(new ShotRecord(ref.image(), ref.fullPath()));
 
         var isMatch = Helper.await(
-                ConfigHandler.retakeShot(),
+                ConfigHandler.retakeShotCount(),
                 ConfigHandler.retakeShotInterval(),
                 this::isMatch
         );
@@ -144,7 +144,7 @@ public class ShotExecutor {
         ref.width(shot.width()).height(shot.height());
         saveShot(shot.image(), ref.path(), ref.fullName());
 
-        Helper.repeat(ConfigHandler.multiRef(), ConfigHandler.multiRefInterval(),
+        Helper.repeat(ConfigHandler.multiRefCount(), ConfigHandler.multiRefInterval(),
                 (count) -> {
                     var img = takeShot(element);
                     ref.timestamp(REF_IMAGE_STAMP + "(" + count + ")");

@@ -60,7 +60,7 @@ public class TakeRef {
     }
 
     private void setRefModelData(String name) {
-        ref.path(ConfigHandler.refPath())
+        ref.path(ConfigHandler.refDirectory())
                 .name(name)
                 .timestamp(REF_IMAGE_STAMP);
     }

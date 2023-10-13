@@ -3,15 +3,15 @@ package kinasr.nsr_shot.model;
 public class TechniqueRecord {
     private SimilarityTechniques technique;
     private Double threshold;
-    private Operation operation;
+    private Operation comparisonOperation;
 
     public TechniqueRecord() {
     }
 
-    public TechniqueRecord(SimilarityTechniques technique, Double threshold, Operation operation) {
+    public TechniqueRecord(SimilarityTechniques technique, Double threshold, Operation comparisonOperation) {
         this.technique = technique;
         this.threshold = threshold;
-        this.operation = operation;
+        this.comparisonOperation = comparisonOperation;
     }
 
     public SimilarityTechniques technique() {
@@ -33,11 +33,11 @@ public class TechniqueRecord {
     }
 
     public Operation operation() {
-        return operation;
+        return comparisonOperation;
     }
 
     public TechniqueRecord operation(Operation operation) {
-        this.operation = operation;
+        this.comparisonOperation = operation;
         return this;
     }
 }

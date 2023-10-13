@@ -51,7 +51,7 @@ public class TakeShot {
     }
 
     private void setShotModelData(String name) {
-        shot.path(ConfigHandler.shotPath())
+        shot.path(ConfigHandler.shotDirectory())
                 .name(name)
                 .timestamp(timestamp());
     }
