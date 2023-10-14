@@ -1,25 +1,34 @@
 shot:
-  actual-path: src/test/resources/shot_images/actual/
-  expected-path: src/test/resources/shot_images/expected/
+  # Actual and expected directories
+  imageDirectories:
+    actual: src/test/resources/shot_images/actual/
+    expected: src/test/resources/shot_images/expected/
 
-  retake-shot: 3
-  retake-shot-interval: 1000
-  # >= 1
-  multi-ref: 3
-  multi-ref-interval: 1000
+  # Retake shot settings
+  retakeShot:
+    count: 3
+    interval: 1000
 
+  # Multi-Reference settings
+  multiReference:
+    # Should be >= 1
+    count: 3
+    interval: 1000
+
+  # Flags
   flags:
-    save-shot: true
-    save-on-fly-ref: true
-    support-fluent: false
-    resize-ref-image-to-match-shot-image-size: true
-    force-resize-window-to-match-the-reference: true
+    saveShotImage: true
+    saveOnTheFlyReference: true
+    supportFluentNaming: false
+    resizeShotImageToMatchReferenceImageSize: true
+    forceResizeWindowToMatchReference: true
 
+  # Techniques
   techniques:
     - technique: SSI
       threshold: 0.90
-      operation: GREATER
+      comparisonOperation: GREATER
 
     - technique: MSE
       threshold: 30.0
-      operation: LESS
+      comparisonOperation: LESS

@@ -19,8 +19,8 @@ public class ShotOption {
         return new ShotOption(
                 ConfigHandler.resizeImage(),
                 ConfigHandler.forceResizeWindow(),
-                ConfigHandler.supportFluent(),
-                ConfigHandler.supportFluent() ? 4 : 3
+                ConfigHandler.supportFluentNaming(),
+                ConfigHandler.supportFluentNaming() ? 4 : 3
         );
     }
 

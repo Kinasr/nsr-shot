@@ -32,30 +32,58 @@ public class TakeShot {
         this.ref = ref;
     }
 
+    /**
+     * Takes a shot using the shot executor.
+     *
+     * @return The shot executor instance.
+     */
     public ShotExecutor takeShot() {
         setShotModelData(attribute.name());
 
         return shotExecutor(null);
     }
 
+    /**
+     * Takes a screenshot of the element specified by the given locator.
+     *
+     * @param by the locator of the element to take a screenshot of
+     * @return the ShotExecutor instance to configure and execute the screenshot action
+     */
     public ShotExecutor takeShot(By by) {
         setShotModelData(attribute.name());
 
         return shotExecutor(driver.findElement(by));
     }
 
+    /**
+     * Takes a screenshot of the given web element.
+     *
+     * @param element The web element to take a screenshot of.
+     * @return The shot executor object.
+     */
     public ShotExecutor takeShot(WebElement element) {
         setShotModelData(attribute.name());
 
         return shotExecutor(element);
     }
 
+    /**
+     * Sets the shot model data.
+     *
+     * @param name the name of the shot
+     */
     private void setShotModelData(String name) {
-        shot.path(ConfigHandler.shotPath())
+        shot.path(ConfigHandler.shotDirectory())
                 .name(name)
                 .timestamp(timestamp());
     }
 
+    /**
+     * Executes a shot on a given WebElement.
+     *
+     * @param element The WebElement on which the shot will be executed.
+     * @return The ShotExecutor responsible for executing the shot.
+     */
     private ShotExecutor shotExecutor(WebElement element) {
         prepareWindowSize();
         hideUnwantedElements(driver, attribute.locators(), attribute.elements());
@@ -63,6 +91,9 @@ public class TakeShot {
         return new ShotExecutor(driver, element, ref, shot, option);
     }
 
+    /**
+     * Prepares the window size for taking a screenshot.
+     */
     private void prepareWindowSize() {
         var windowSize = driver.manage().window().getSize();
         shot.width(windowSize.width)
