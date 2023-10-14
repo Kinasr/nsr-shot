@@ -26,7 +26,7 @@ public class Helper {
     /**
      * Returns the current timestamp as a string.
      *
-     * @return  the current timestamp as a string
+     * @return the current timestamp as a string
      */
     public static String timestamp() {
         return String.valueOf(Calendar.getInstance().getTimeInMillis());
@@ -35,8 +35,8 @@ public class Helper {
     /**
      * Generates a shot name for a given depth in the stack trace.
      *
-     * @param  depth  the depth in the stack trace
-     * @return        the generated shot name
+     * @param depth the depth in the stack trace
+     * @return the generated shot name
      */
     public static String prepareShotName(int depth) {
         var walker = StackWalker.getInstance();
@@ -52,8 +52,8 @@ public class Helper {
     /**
      * Separates the full path into the path and the filename, and returns a ScreenshotModel object.
      *
-     * @param  fullPath   the full path of the file
-     * @return            a ScreenshotModel object representing the separated path and filename
+     * @param fullPath the full path of the file
+     * @return a ScreenshotModel object representing the separated path and filename
      */
     public static ScreenshotModel separateFullPath(String fullPath) {
         var shot = new ScreenshotModel();
@@ -78,8 +78,8 @@ public class Helper {
     /**
      * Separates the components of a full name and creates a ScreenshotModel object.
      *
-     * @param  fullName  the full name to be separated
-     * @return           the ScreenshotModel object with the separated components
+     * @param fullName the full name to be separated
+     * @return the ScreenshotModel object with the separated components
      */
     public static ScreenshotModel separateFullName(String fullName) {
         var shot = new ScreenshotModel();
@@ -110,9 +110,9 @@ public class Helper {
     /**
      * Retrieves the full path of a file in a given directory that starts with the specified prefix.
      *
-     * @param  directoryPath  the path of the directory where the file is located
-     * @param  prefix         the prefix that the file name should start with
-     * @return                the full path of the matching file, or an empty string if no file matches the prefix
+     * @param directoryPath the path of the directory where the file is located
+     * @param prefix        the prefix that the file name should start with
+     * @return the full path of the matching file, or an empty string if no file matches the prefix
      */
     public static String getFileFullPathWithPrefix(String directoryPath, String prefix) {
         AtomicReference<String> fileFullPath = new AtomicReference<>("");

@@ -24,8 +24,8 @@ public class CVManager {
     /**
      * Returns the difference between two images using the specified similarity technique.
      *
-     * @param  technique the similarity technique to use (SSI, MSE, MAE, PSNR)
-     * @return           the difference between the two images
+     * @param technique the similarity technique to use (SSI, MSE, MAE, PSNR)
+     * @return the difference between the two images
      */
     public double getDiff(SimilarityTechniques technique) {
         return switch (technique) {
@@ -81,8 +81,8 @@ public class CVManager {
     /**
      * Loads an image from a byte array.
      *
-     * @param  img  the byte array containing the image data
-     * @return      the loaded image as a Mat object
+     * @param img the byte array containing the image data
+     * @return the loaded image as a Mat object
      */
     private Mat loadImage(byte[] img) {
         return imdecode(new Mat(img), IMREAD_COLOR);
@@ -91,9 +91,9 @@ public class CVManager {
     /**
      * Calculates the Structural Similarity Index (SSI) between two images.
      *
-     * @param  image1 The first image.
-     * @param  image2 The second image.
-     * @return        The SSI value as a double.
+     * @param image1 The first image.
+     * @param image2 The second image.
+     * @return The SSI value as a double.
      */
     private double calculateStructuralSimilarityIndex(Mat image1, Mat image2) {
         Mat ssiResult = new Mat();
@@ -107,9 +107,9 @@ public class CVManager {
     /**
      * Calculates the mean squared error between two images.
      *
-     * @param  image1 the first image
-     * @param  image2 the second image
-     * @return        the mean squared error between the two images
+     * @param image1 the first image
+     * @param image2 the second image
+     * @return the mean squared error between the two images
      */
     private double calculateMeanSquaredError(Mat image1, Mat image2) {
         Mat mseResult = new Mat();
@@ -130,9 +130,9 @@ public class CVManager {
     /**
      * Calculates the mean absolute error between two images.
      *
-     * @param  image1  the first image
-     * @param  image2  the second image
-     * @return         the mean absolute error between the two images
+     * @param image1 the first image
+     * @param image2 the second image
+     * @return the mean absolute error between the two images
      */
     private double calculateMeanAbsoluteError(Mat image1, Mat image2) {
         Mat mseResult = new Mat();
@@ -143,8 +143,8 @@ public class CVManager {
     /**
      * Calculates the Peak Signal-to-Noise Ratio (PSNR).
      *
-     * @param  mse  the mean squared error
-     * @return      the PSNR value
+     * @param mse the mean squared error
+     * @return the PSNR value
      */
     private double calculatePSNR(double mse) {
         var maxValue = 255;

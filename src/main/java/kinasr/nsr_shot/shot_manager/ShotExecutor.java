@@ -42,10 +42,10 @@ public class ShotExecutor {
     /**
      * Adds a new technique record to the list of techniques.
      *
-     * @param  technique  the similarity technique to be added
-     * @param  threshold  the threshold value for the technique
-     * @param  operation  the operation to be performed
-     * @return            the current ShotExecutor instance
+     * @param technique the similarity technique to be added
+     * @param threshold the threshold value for the technique
+     * @param operation the operation to be performed
+     * @return the current ShotExecutor instance
      */
     public ShotExecutor technique(SimilarityTechniques technique, Double threshold, Operation operation) {
         techniques.add(new TechniqueRecord(

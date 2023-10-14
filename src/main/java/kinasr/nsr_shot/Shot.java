@@ -128,6 +128,7 @@ public class Shot {
 
     /**
      * Takes a screenshot of the element identified by the given selector.
+     *
      * @param by The selector used to identify the element.
      * @return A TakeShot object representing the screenshot.
      */

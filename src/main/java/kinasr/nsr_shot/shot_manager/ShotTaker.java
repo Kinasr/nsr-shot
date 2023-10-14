@@ -8,6 +8,7 @@ import org.openqa.selenium.WebElement;
 public class ShotTaker {
     private ShotTaker() {
     }
+
     /**
      * Takes a full screenshot of the current web page.
      *
