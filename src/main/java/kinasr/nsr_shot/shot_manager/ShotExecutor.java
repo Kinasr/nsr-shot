@@ -39,6 +39,14 @@ public class ShotExecutor {
         this.option = option;
     }
 
+    /**
+     * Adds a new technique record to the list of techniques.
+     *
+     * @param  technique  the similarity technique to be added
+     * @param  threshold  the threshold value for the technique
+     * @param  operation  the operation to be performed
+     * @return            the current ShotExecutor instance
+     */
     public ShotExecutor technique(SimilarityTechniques technique, Double threshold, Operation operation) {
         techniques.add(new TechniqueRecord(
                 technique,
@@ -49,6 +57,11 @@ public class ShotExecutor {
         return this;
     }
 
+    /**
+     * Performs a shot and returns the result.
+     *
+     * @return The shot result.
+     */
     public ShotResult perform() {
         result = new ShotResult(new ShotRecord(ref.image(), ref.fullPath()));
 
@@ -61,10 +74,18 @@ public class ShotExecutor {
         return result.isMatch(isMatch);
     }
 
+    /**
+     * Verifies the result of the perform method.
+     */
     public void verify() {
         perform().verify();
     }
 
+    /**
+     * Checks if the current screenshot matches the reference image.
+     *
+     * @return true if the screenshot matches the reference image, false otherwise.
+     */
     private boolean isMatch() {
         msg = new StringBuilder();
 
@@ -83,6 +104,12 @@ public class ShotExecutor {
         return isMatch;
     }
 
+    /**
+     * Checks if the given CV matches all the techniques and their thresholds.
+     *
+     * @param cv The CV to be checked.
+     * @return True if the CV matches all the techniques and their thresholds, false otherwise.
+     */
     private boolean isMatch(CVManager cv) {
         var isMatch = true;
         if (techniques.isEmpty())
@@ -107,6 +134,13 @@ public class ShotExecutor {
         return isMatch;
     }
 
+    /**
+     * Checks the size of the images.
+     * If the 'resizeImage' option is enabled, resizes the second image to match the size of the first image.
+     * Otherwise, throws an AssertionError if the two images have different sizes.
+     *
+     * @param cv The CVManager object.
+     */
     private void checkImageSize(CVManager cv) {
         try (var shotSize = cv.image1Size(); var refSize = cv.image2Size()) {
             if (Boolean.TRUE.equals(option.resizeImage()))
@@ -118,6 +152,10 @@ public class ShotExecutor {
         }
     }
 
+    /**
+     * Takes a screenshot and performs image comparison.
+     * Returns a CVManager object containing the reference image and the screenshot image.
+     */
     private CVManager screenshot() {
         shot.image(takeShot(element));
 
@@ -134,12 +172,21 @@ public class ShotExecutor {
         return cv;
     }
 
+    /**
+     * Takes a screenshot and returns the byte array representation.
+     *
+     * @param element The WebElement to take a screenshot of.
+     * @return The byte array representation of the screenshot.
+     */
     private byte[] takeShot(WebElement element) {
         return element == null ?
                 ShotTaker.takeFullShot(driver) :
                 ShotTaker.takeElementShot(element);
     }
 
+    /**
+     * Saves the reference image and throws an AssertionError if no reference image is found.
+     */
     private void saveRefAndThrow() {
         ref.width(shot.width()).height(shot.height());
         saveShot(shot.image(), ref.path(), ref.fullName());
