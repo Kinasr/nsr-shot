@@ -2,6 +2,7 @@ package kinasr.nsr_shot.utility;
 
 import kinasr.nsr_shot.exception.ShotFileException;
 import kinasr.nsr_shot.model.ScreenshotModel;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.*;
 
 import java.io.File;
@@ -9,10 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntConsumer;
@@ -184,18 +182,19 @@ public class Helper {
      * @throws NoSuchElementException If an element cannot be found.
      */
     public static void hideUnwantedElements(WebDriver driver, List<By> locators, List<WebElement> elements) {
+        var tempElements = new ArrayList<>(elements);
         // Find elements using the locator
         for (By locator : locators) {
             var foundElements = driver.findElements(locator);
             if (foundElements.isEmpty())
                 throw new NoSuchElementException("Can not find this element <" + locator + ">");
 
-            elements.addAll(foundElements);
+            tempElements.addAll(foundElements);
         }
 
         // Hide the elements using JavaScriptExecutor
         var jsExecutor = (JavascriptExecutor) driver;
-        elements.forEach(element -> jsExecutor
+        tempElements.forEach(element -> jsExecutor
                 .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
     }
 
