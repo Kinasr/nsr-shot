@@ -31,3 +31,23 @@ A light-weight library for visual testing build on JavaCV and Selenium
 - Run `mvn install` to ensure the library is installed.
 
 ### 2. Hello World
+
+```java
+public class HelloWorld {
+  public static void main(String[] args) {
+    WebDriver driver; // Initialize driver
+
+    // Check that full page screenshot match the reference image
+    new Shot(driver)
+            .takeShot()
+            .verify();
+
+    // Check that screenshot for this element with ignoring element match reference image 
+    new Shot(driver)
+            .ignoreElement(By.id("element_need_to_be_hidden"))
+            .takeShot(By.id("take_screenshot_for_this_element"))
+            .verify();
+  }
+}
+```
+- The reference image will be created automatically if not exist
