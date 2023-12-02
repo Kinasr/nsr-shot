@@ -72,6 +72,17 @@ public class IntegrationTest {
     }
 
     @Test
+    void checkThatCanTakeRefAndShotInSameTestWithIgnoreElement() {
+        var shot = new Shot(driver)
+                .ignoreElement(dialogLoginCredentials)
+                .takeRef(wrapperLogin);
+        driver.navigate().refresh();
+
+        shot.takeShot(wrapperLogin)
+                .verify();
+    }
+
+    @Test
     void checkThatShotResultsHasSomeResults() {
         var result = new Shot(driver)
                 .takeShot()

@@ -2,7 +2,6 @@ package kinasr.nsr_shot.utility;
 
 import kinasr.nsr_shot.exception.ShotFileException;
 import kinasr.nsr_shot.model.ScreenshotModel;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.*;
 
 import java.io.File;
@@ -10,7 +9,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntConsumer;
@@ -27,7 +30,8 @@ public class Helper {
      * @return the current timestamp as a string
      */
     public static String timestamp() {
-        return String.valueOf(Calendar.getInstance().getTimeInMillis());
+        var now = ZonedDateTime.now();
+        return now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
     }
 
     /**
@@ -182,20 +186,16 @@ public class Helper {
      * @throws NoSuchElementException If an element cannot be found.
      */
     public static void hideUnwantedElements(WebDriver driver, List<By> locators, List<WebElement> elements) {
-        var tempElements = new ArrayList<>(elements);
         // Find elements using the locator
         for (By locator : locators) {
             var foundElements = driver.findElements(locator);
             if (foundElements.isEmpty())
                 throw new NoSuchElementException("Can not find this element <" + locator + ">");
 
-            tempElements.addAll(foundElements);
+            foundElements.forEach(element -> hideElement(driver, element));
         }
 
-        // Hide the elements using JavaScriptExecutor
-        var jsExecutor = (JavascriptExecutor) driver;
-        tempElements.forEach(element -> jsExecutor
-                .executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element));
+        elements.forEach(element -> hideElement(driver, element));
     }
 
     /**
@@ -243,5 +243,17 @@ public class Helper {
                 // Ignore the exception
             }
         }
+    }
+
+    /**
+     * Hides the specified element on the web page.
+     *
+     * @param  driver   the WebDriver instance to use
+     * @param  element  the WebElement to hide
+     */
+    private static void hideElement(WebDriver driver, WebElement element) {
+        // Hide the elements using JavaScriptExecutor
+        var jsExecutor = (JavascriptExecutor) driver;
+        jsExecutor.executeScript("arguments[0].setAttribute('style', 'visibility: hidden')", element);
     }
 }
