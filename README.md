@@ -12,7 +12,7 @@ way to compare screenshots of web pages and elements to reference images.
     <dependency>
         <groupId>io.github.kinasr</groupId>
         <artifactId>nsr-shot</artifactId>
-        <version>0.0.7-alpha</version>
+        <version>0.0.8-alpha</version>
     </dependency>
     ```
 - You will also need to add the following dependencies for Selenium and NSR-YAML:
