@@ -6,7 +6,7 @@
 
     <groupId>io.github.kinasr</groupId>
     <artifactId>nsr-shot</artifactId>
-    <version>0.0.8-alpha</version>
+    <version>0.0.9-alpha</version>
     <name>NSR-Shot</name>
     <description>A library offers a variety of tools and features that make it easy to create and run visual tests.</description>
     <url>https://github.com/Kinasr/nsr-shot</url>
