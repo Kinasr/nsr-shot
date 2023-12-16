@@ -44,7 +44,7 @@ public class Helper {
         var walker = StackWalker.getInstance();
         var frame = walker.walk(frames -> frames.skip(depth).findFirst().orElse(null));
 
-        String name = "";
+        var name = "";
         if (frame != null)
             name = frame.getClassName() + "#" + frame.getMethodName();
 
