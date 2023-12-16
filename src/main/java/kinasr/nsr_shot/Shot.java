@@ -18,7 +18,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 import static kinasr.nsr_shot.utility.Constant.NAME_SPLITTER;
-import static kinasr.nsr_shot.utility.Constant.REF_IMAGE_STAMP;
+import static kinasr.nsr_shot.utility.Constant.REFERENCE_IMAGE_STAMP;
 import static kinasr.nsr_shot.utility.Helper.getFileFullPathWithPrefix;
 import static kinasr.nsr_shot.utility.Helper.prepareShotName;
 
@@ -207,14 +207,14 @@ public class Shot {
     private ScreenshotModel loadRef() {
         var fullPath = getFileFullPathWithPrefix(
                 ConfigHandler.refDirectory(),
-                attribute.name() + NAME_SPLITTER + REF_IMAGE_STAMP + NAME_SPLITTER
+                attribute.name() + NAME_SPLITTER + REFERENCE_IMAGE_STAMP + NAME_SPLITTER
         );
 
         if (fullPath.isEmpty())
             return new ScreenshotModel()
                     .path(ConfigHandler.refDirectory())
                     .name(attribute.name())
-                    .timestamp(REF_IMAGE_STAMP);
+                    .timestamp(REFERENCE_IMAGE_STAMP);
 
         try {
             return new ScreenshotModel()

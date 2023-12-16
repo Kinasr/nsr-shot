@@ -84,27 +84,46 @@ public class Helper {
      * @return the ScreenshotModel object with the separated components
      */
     public static ScreenshotModel separateFullName(String fullName) {
+        if (fullName == null || fullName.isEmpty())
+            throw new IllegalArgumentException("Full name cannot be null or empty");
+
         var shot = new ScreenshotModel();
 
-        var exLastIndex = fullName.lastIndexOf(FULL_STOP);
-        if (exLastIndex != -1) {
-            shot.extension(fullName.substring(exLastIndex));
-            fullName = fullName.replace(shot.extension(), EMPTY_STRING);
-        }
-
-        while (true) {
-            var sub = fullName.substring(fullName.lastIndexOf(NAME_SPLITTER) + 1);
-
-            if (sub.contains(SIZE_SPLITTER)) {
-                shot.windowSize(sub);
-            } else if (sub.matches("\\d+") || sub.equals(REF_IMAGE_STAMP)) {
-                shot.timestamp(sub);
-            } else {
-                shot.name(fullName);
-                break;
+        // Extract extension (optional)
+        var extensionSeparatorIndex = fullName.lastIndexOf(EXTENSION_SEPARATOR);
+        if (extensionSeparatorIndex != -1) {
+            var extension = fullName.substring(extensionSeparatorIndex);
+            if (extension.length() <= MAX_EXTENSION_LENGTH) {
+                shot.extension(fullName.substring(extensionSeparatorIndex));
+                fullName = fullName.replace(shot.extension(), EMPTY_STRING);
             }
-            fullName = fullName.replace(NAME_SPLITTER + sub, EMPTY_STRING);
         }
+
+        // Split name and handle special cases
+        var nameParts = fullName.split(NAME_SPLITTER);
+
+        // Window size (last element)
+        if (nameParts.length > 1 && nameParts[nameParts.length - 1].matches(SIZE_SPLITTER_REGEX)) {
+            shot.windowSize(nameParts[nameParts.length - 1]);
+            nameParts = Arrays.copyOf(nameParts, nameParts.length - 1);
+        }
+
+        // Timestamp or reference image (last element)
+        if (nameParts.length > 1 && nameParts[nameParts.length - 1].matches(NUMBER_REGEX) ||
+                nameParts[nameParts.length - 1].equals(REFERENCE_IMAGE_STAMP)) {
+            shot.timestamp(nameParts[nameParts.length - 1]);
+            nameParts = Arrays.copyOf(nameParts, nameParts.length - 1);
+        }
+
+        // Build and set name (remaining parts)
+        if (nameParts.length > 0) {
+            StringBuilder nameBuilder = new StringBuilder();
+            for (String part : nameParts) {
+                nameBuilder.append(part).append(NAME_SPLITTER);
+            }
+            shot.name(nameBuilder.deleteCharAt(nameBuilder.length() - 1).toString());
+        }
+
 
         return shot;
     }
@@ -248,8 +267,8 @@ public class Helper {
     /**
      * Hides the specified element on the web page.
      *
-     * @param  driver   the WebDriver instance to use
-     * @param  element  the WebElement to hide
+     * @param driver  the WebDriver instance to use
+     * @param element the WebElement to hide
      */
     private static void hideElement(WebDriver driver, WebElement element) {
         // Hide the elements using JavaScriptExecutor
