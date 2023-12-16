@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kinasr.nsr_shot.utility.Constant.REF_IMAGE_STAMP;
+import static kinasr.nsr_shot.utility.Constant.REFERENCE_IMAGE_STAMP;
 import static kinasr.nsr_shot.utility.Helper.saveShot;
 
 public class ShotExecutor {
@@ -194,7 +194,7 @@ public class ShotExecutor {
         Helper.repeat(ConfigHandler.multiRefCount(), ConfigHandler.multiRefInterval(),
                 (count) -> {
                     var img = takeShot(element);
-                    ref.timestamp(REF_IMAGE_STAMP + "(" + count + ")");
+                    ref.timestamp(REFERENCE_IMAGE_STAMP + "(" + count + ")");
 
                     saveShot(img, ref.path(), ref.fullName());
                 }

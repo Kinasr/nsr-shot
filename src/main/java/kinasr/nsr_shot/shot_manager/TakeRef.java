@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static kinasr.nsr_shot.utility.Constant.REF_IMAGE_STAMP;
+import static kinasr.nsr_shot.utility.Constant.REFERENCE_IMAGE_STAMP;
 import static kinasr.nsr_shot.utility.Helper.hideUnwantedElements;
 import static kinasr.nsr_shot.utility.Helper.saveShot;
 
@@ -92,7 +92,7 @@ public class TakeRef {
     private void setRefModelData(String name) {
         ref.path(ConfigHandler.refDirectory())
                 .name(name)
-                .timestamp(REF_IMAGE_STAMP);
+                .timestamp(REFERENCE_IMAGE_STAMP);
     }
 
     /**
